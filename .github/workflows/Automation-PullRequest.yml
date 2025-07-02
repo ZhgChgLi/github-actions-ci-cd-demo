@@ -9,9 +9,9 @@ on:
     types: [opened, synchronize, reopened]
 
 # Job 工作項目
+# Job 會並發執行
 jobs:
   # Job ID
-  # Job 會並發執行
   label-pr-by-file-count:
     # Job 名稱 (可省略，有設定在 Log 顯示比較好讀)
     name: Label PR by changes file count
