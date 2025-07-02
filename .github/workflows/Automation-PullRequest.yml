@@ -86,6 +86,9 @@ jobs:
   # ---------
   assign-self-if-no-assignee:
     name: Automatically assign to self if no assignee is specified
+    # 因為是共用觸發事件，所以在 Job 上自己判斷，當是 Pull Request Opened(首次建立) 時才執行 Job 否則會 Skipped
+    if: github.event_name == 'pull_request' && github.event.action == 'opened'
+    
     # Runner Label - 使用 GitHub Hosted Runner ubuntu-latest 來執行工作
     # 如果是 Private Repo 會計算用量，超過可能會產生費用
     runs-on: ubuntu-latest
