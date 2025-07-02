@@ -91,7 +91,7 @@ jobs:
     
     # Runner Label - 使用 GitHub Hosted Runner ubuntu-latest 來執行工作
     # 如果是 Private Repo 會計算用量，超過可能會產生費用
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted-zhgchgli]
 
     steps:
       - name: Assign self if No Assignee
