@@ -83,18 +83,31 @@ jobs:
         with:
           script: |
             const prList = JSON.parse(`${{ needs.caculate-pr-status.outputs.pr_list }}`);
-            const lines = prList.map(item => {
-              return `• PR #${item.pr} "${item.title}" - 🕒 ${item.idle} day(s)`;
+            const blocks = [];
+      
+            // 標題
+            blocks.push({
+              type: "section",
+              text: {
+                type: "mrkdwn",
+                text: `📬 *Open PR Report*\nTotal: *${prList.length}* PR(s)`
+              }
             });
-  
-            const message = [
-              `📬 *Open PR Report*`,
-              `Total: ${prList.length} PRs\n`,
-              lines.join('\n')
-            ].join('\n');
-            
+      
+            // 每個 PR 一行
+            for (const pr of prList) {
+              blocks.push({
+                type: "section",
+                text: {
+                  type: "mrkdwn",
+                  text: `• <https://github.com/${context.repo.owner}/${context.repo.repo}/pull/${pr.pr}|PR #${pr.pr}> "${pr.title}" - 🕒 ${pr.idle} day(s)`
+                }
+              });
+            }
+
             // 設定回 Output
-            core.setOutput('message', message);
+            core.setOutput('message', JSON.stringify(blocks));
+
             
       # 使用 Slack 官方封裝好的 Slack API Github Actions
       # https://tools.slack.dev/slack-github-action/sending-techniques/sending-data-slack-api-method/
