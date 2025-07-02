@@ -119,8 +119,7 @@ jobs:
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
             channel: ${{ vars.SLACK_TEAM_CHANNEL_ID }}
-            # 轉回 Blocks Object
-            blocks: ${{ fromJson(steps.gen-msg.outputs.blocks) }}
+            blocks: ${{ steps.gen-msg.outputs.blocks }}
   # ----
   auto-close-old-prs:
     name: Auto Close Old PRs
