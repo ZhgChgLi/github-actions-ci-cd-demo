@@ -71,6 +71,14 @@ jobs:
                 ;;
             esac
           done
+
+          # (可選)如果 Label 不存在則建立
+          if ! gh label list --repo "$REPO" | grep -q "^$LABEL"; then
+            echo "🆕 Creating missing label: $LABEL"
+            gh label create "$LABEL" --repo "$REPO" --description "Size label: $LABEL" --color "ededed"
+          else
+            echo "✅ Label '$LABEL' already exists"
+          fi
           
           # 使用 GitHub API (gh cli) 標記上 Label
           gh pr edit $PR_NUMBER --repo $REPO --add-label "$LABEL"
