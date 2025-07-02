@@ -106,7 +106,7 @@ jobs:
             }
 
             // 設定回 Output，只接受 String
-            core.setOutput('message', JSON.stringify(blocks));
+            core.setOutput('blocks', JSON.stringify(blocks));
 
             
       # 使用 Slack 官方封裝好的 Slack API Github Actions
