@@ -97,6 +97,7 @@ jobs:
       - name: Assign self if No Assignee
         # 使用 GitHub Script (JavaScript) 撰寫腳本 (Node.js 環境)
         # 相較上面直接用 Shell Script 寫起來更方便漂亮
+        # 也不需要自行注入環境變數、GITHUB_TOKEN
         uses: actions/github-script@v7
         with:
           script: |
