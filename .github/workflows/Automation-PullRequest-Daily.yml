@@ -1,0 +1,140 @@
+# Workflow(Action) 名稱
+name: Daily PR Summary to Slack and Auto closed
+
+# 觸發事件
+on:
+  # 排程定時自動執行
+  # https://crontab.guru/
+  # UTC 時間
+  schedule:
+    # UTC 的 01:00 = 每天 UTC+8 的 09:00
+    - cron: '0 1 * * *'
+  # 手動觸發
+  workflow_dispatch:
+
+# Job 工作項目
+# Job 會並發執行
+jobs:
+  # Job ID
+  caculate-pr-status:
+    # Job 名稱 (可省略，有設定在 Log 顯示比較好讀)
+    name: Caculate PR Status
+    # Runner Label - 使用 GitHub Hosted Runner ubuntu-latest 來執行工作
+    # 如果是 Private Repo 會計算用量，超過可能會產生費用
+    runs-on: ubuntu-latest
+
+    # Job Output
+    outputs:
+      pr_list: ${{ steps.pr-info.outputs.pr_list }}
+
+    # 工作步驟
+    # 工作步驟會照順序執行
+    steps:
+      # 步驟名稱
+      - name: Fetch open PRs and caculate
+        # Step 外部要引用 Output 輸出，需設定
+        id: pr-info
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const now = new Date();
+            const per_page = 100;
+            let page = 1;
+            let allPRs = [];
+      
+            while (true) {
+              const { data: prs } = await github.rest.pulls.list({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: 'open',
+                per_page,
+                page,
+              });
+              if (prs.length === 0) break;
+              allPRs = allPRs.concat(prs);
+              if (prs.length < per_page) break;
+              page++;
+            }
+      
+            const result = allPRs.map(pr => {
+              const created = new Date(pr.created_at);
+              const daysOpen = Math.floor((now - created) / (1000 * 60 * 60 * 24));
+              return {
+                pr: pr.number.toString(),
+                title: pr.title,
+                idle: daysOpen
+              };
+            });
+
+            // 設定回 Output
+            core.setOutput('pr_list', JSON.stringify(result));
+  # ----
+  send-pr-summary-message-to-slack:
+    name: Send PR Summary Messag to Slack
+    # Job 預設是並發，使用 needs 可以迫使當前 Job 等到 need Job 完成時才會執行
+    needs: [caculate-pr-status]
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Generate Message
+        # Step 外部要引用 Output 輸出，需設定
+        id: gen-msg
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prList = JSON.parse(`${{ needs.caculate-pr-status.outputs.pr_list }}`);
+            const lines = prList.map(item => {
+              return `• PR #${item.pr} "${item.title}" - 🕒 ${item.idle} day(s)`;
+            });
+  
+            const message = [
+              `📬 *Open PR Report*`,
+              `Total: ${prList.length} PRs\n`,
+              lines.join('\n')
+            ].join('\n');
+            
+            // 設定回 Output
+            core.setOutput('message', message);
+            
+      # 使用 Slack 官方封裝好的 Slack API Github Actions
+      # https://tools.slack.dev/slack-github-action/sending-techniques/sending-data-slack-api-method/
+      # 發送訊息
+      - name: Post text to a Slack channel
+        uses: slackapi/slack-github-action@v2.1.0
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel: ${{ vars.SLACK_TEAM_CHANNEL_ID }}
+            text: ${{ steps.gen-msg.outputs.message }}
+  # ----
+  auto-close-old-prs:
+    name: Auto Close Old PRs
+    needs: [caculate-pr-status]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Auto close PRs opened more than 90 days
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prList = JSON.parse(`${{ needs.caculate-pr-status.outputs.pr_list }}`);
+            const oldPRs = prList.filter(pr => pr.idle > 90);
+
+            for (const pr of oldPRs) {
+              await github.rest.pulls.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: parseInt(pr.pr),
+                state: 'closed'
+              });
+
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: parseInt(pr.pr),
+                body: `⚠️ This pull request has been automatically closed because it has been open for more than 90 days. Please reopen if needed.`
+              });
+            }
+
+            console.log(`Closed ${oldPRs.length} PR(s)`);
