@@ -16,6 +16,7 @@ jobs:
     # Job 名稱 (可省略，有設定在 Log 顯示比較好讀)
     name: Label PR by changes file count
     # Runner Label - 使用 GitHub Hosted Runner ubuntu-latest 來執行工作
+    # 如果是 Private Repo 會計算用量，超過可能會產生費用
     runs-on: ubuntu-latest
 
     # 工作步驟
