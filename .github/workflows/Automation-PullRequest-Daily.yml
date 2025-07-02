@@ -1,5 +1,5 @@
 # Workflow(Action) 名稱
-name: Daily PR Summary to Slack and Auto closed
+name: Pull Reqeust Automation - Daily Checker
 
 # 觸發事件
 on:
