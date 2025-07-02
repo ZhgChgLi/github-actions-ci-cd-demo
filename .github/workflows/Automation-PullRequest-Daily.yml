@@ -100,7 +100,7 @@ jobs:
                 type: "section",
                 text: {
                   type: "mrkdwn",
-                  text: `• <https://github.com/${context.repo.owner}/${context.repo.repo}/pull/${pr.pr}|PR #${pr.pr}> "${pr.title}" - 🕒 ${pr.idle} day(s)`
+                  text: `• <https://github.com/${context.repo.owner}/${context.repo.repo}/pull/${pr.pr}|PR #${pr.pr}> *${pr.title}* - 🕒 ${pr.idle} day(s)`
                 }
               });
             }
