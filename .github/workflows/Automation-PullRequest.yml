@@ -83,3 +83,38 @@ jobs:
           
           # 使用 GitHub API (gh cli) 標記上 Label
           gh pr edit $PR_NUMBER --repo $REPO --add-label "$LABEL"
+  # ---------
+  assign-self-if-no-assignee:
+    name: Automatically assign to self if no assignee is specified
+    # Runner Label - 使用 GitHub Hosted Runner ubuntu-latest 來執行工作
+    # 如果是 Private Repo 會計算用量，超過可能會產生費用
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Assign self if No Assignee
+        # 使用 GitHub Script (JavaScript) 撰寫腳本 (Node.js 環境)
+        # 相較上面直接用 Shell Script 寫起來更方便漂亮
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.pull_request; // 如果要連 Issue 一起支援可寫成 context.payload.issue || context.payload.pull_request
+            const assignees = issue.assignees || [];
+            const me = context.actor;
+
+            if (assignees.length === 0) {
+              // Assignee 設成自己
+              await github.rest.issues.addAssignees({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                assignees: [me]
+              });
+
+              // 留言通知
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: `🔧 No assignee was set, so I have assigned this to myself (@${me}).`
+              });
+            }
