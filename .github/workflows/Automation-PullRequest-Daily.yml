@@ -120,7 +120,7 @@ jobs:
           payload: |
             channel: ${{ vars.SLACK_TEAM_CHANNEL_ID }}
             # 轉回 Blocks Object
-            text: ${{ fromJson(steps.gen-msg.outputs.blocks) }}
+            blocks: ${{ fromJson(steps.gen-msg.outputs.blocks) }}
   # ----
   auto-close-old-prs:
     name: Auto Close Old PRs
