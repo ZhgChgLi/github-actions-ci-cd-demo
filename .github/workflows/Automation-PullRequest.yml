@@ -1,0 +1,76 @@
+# Workflow(Action) 名稱
+name: Pull Reqeust Automation
+
+# 觸發事件
+on:
+  # PR 事件
+  pull_request:
+    # PR - 開啟、重開、有新 Push Commit 時
+    types: [opened, synchronize, reopened]
+
+# Job 工作項目
+jobs:
+  # Job ID
+  # Job 會並發執行
+  label-pr-by-file-count:
+    # Job 名稱 (可省略，有設定在 Log 顯示比較好讀)
+    name: Label PR by changes file count
+    # Runner Label - 使用 GitHub Hosted Runner ubuntu-latest 來執行工作
+    runs-on: ubuntu-latest
+
+    # 工作步驟
+    # 工作步驟會照順序執行
+    steps:
+      # 步驟名稱
+      - name: Get changed file count and apply label
+        # 步驟 ID (可省略，後續若沒有 Step 要引用 Output 輸出則不需設定)
+        id: get-changed-files-count-by-gh
+        # 注入外部環境參數到執行階段
+        env:
+          # secrets.GITHUB_TOKEN 是 GitHub Actions 執行時自動產生的 Token，不需自行在 Secrets 設定，擁有一些 GitHub Repo API Scopes 權限
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # Shell script
+        # GitHub Hosted Runner 內建都有安裝好 gh cli，不需要安裝 Job 就能直接使用
+        run: |
+          # ${{ github }} 是 GitHub Actions 執行時會自動注入的變數參考，可以從中取得執行階段資訊
+          
+          # 取得 PR 編號:
+          PR_NUMBER=${{ github.event.pull_request.number }}
+
+          # 取得 Repo:
+          REPO=${{ github.repository }}
+
+          # 使用 GitHub API (gh cli) 取得 File changed 數量
+          FILE_COUNT=$(gh pr view $PR_NUMBER --repo $REPO --json files --jq '.files | length')
+          
+          # Print Log
+          echo "Changed file count: $FILE_COUNT"
+
+          # Label 邏輯
+          if [ "$FILE_COUNT" -lt 5 ]; then
+            LABEL="XS"
+          elif [ "$FILE_COUNT" -lt 10 ]; then
+            LABEL="S"
+          elif [ "$FILE_COUNT" -lt 30 ]; then
+            LABEL="M"
+          elif [ "$FILE_COUNT" -lt 80 ]; then
+            LABEL="L"
+          elif [ "$FILE_COUNT" -lt 200 ]; then
+            LABEL="XL"
+          else
+            LABEL="XXL"
+          fi
+
+          # 使用 GitHub API (gh cli) 移除目前的 Size Label
+          EXISTING_LABELS=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json labels --jq '.labels[].name')
+          for EXISTING in $EXISTING_LABELS; do
+            case "$EXISTING" in
+              XS|S|M|L|XL|XXL)
+                echo "🧹 Removing existing label: $EXISTING"
+                gh pr edit "$PR_NUMBER" --repo "$REPO" --remove-label "$EXISTING"
+                ;;
+            esac
+          done
+          
+          # 使用 GitHub API (gh cli) 標記上 Label
+          gh pr edit $PR_NUMBER --repo $REPO --add-label "$LABEL"
