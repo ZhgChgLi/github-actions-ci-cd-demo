@@ -1,0 +1,80 @@
+name: app-ci-cd-github-actions-demo
+options:
+  bundleIdPrefix: com.example
+  deploymentTarget:
+    iOS: '13.0'
+  usesTabs: false
+  indentWidth: 2
+  tabWidth: 2
+
+configs:
+  Debug: debug
+  Release: release
+
+targets:
+  app-ci-cd-github-actions-demo:
+    type: application
+    platform: iOS
+    sources:
+      - app-ci-cd-github-actions-demo
+    resources:
+      - app-ci-cd-github-actions-demo/Assets.xcassets
+      - app-ci-cd-github-actions-demo/Base.lproj
+    info:
+      path: app-ci-cd-github-actions-demo/Info.plist
+      properties:
+        CFBundleIdentifier: $(PRODUCT_BUNDLE_IDENTIFIER)
+    settings:
+      base:
+        DEVELOPMENT_TEAM: 4ABLNV4R2V
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.appcicdgithubactionsdemo
+    cocoapods: true
+
+  app-ci-cd-github-actions-demoTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - app-ci-cd-github-actions-demoTests
+    dependencies:
+      - target: app-ci-cd-github-actions-demo
+    info:
+      path: app-ci-cd-github-actions-demoTests/Info.plist
+    settings:
+      base:
+        DEVELOPMENT_TEAM: 4ABLNV4R2V
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.appcicdgithubactionsdemo.tests
+
+  app-ci-cd-github-actions-demoUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - app-ci-cd-github-actions-demoUITests
+    dependencies:
+      - target: app-ci-cd-github-actions-demo
+    info:
+      path: app-ci-cd-github-actions-demoUITests/Info.plist
+    settings:
+      base:
+        DEVELOPMENT_TEAM: 4ABLNV4R2V
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.appcicdgithubactionsdemo.uitests
+
+  app-ci-cd-github-actions-demoSnapshotTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: app-ci-cd-github-actions-demoSnapshotTests
+    dependencies:
+      - target: app-ci-cd-github-actions-demo
+      - product: SnapshotTesting
+        package: SnapshotTesting
+    info:
+      path: app-ci-cd-github-actions-demoSnapshotTests/Info.plist
+      settings:
+        base:
+          DEVELOPMENT_TEAM: 4ABLNV4R2V
+          PRODUCT_BUNDLE_IDENTIFIER: com.example.appcicdgithubactionsdemo.snapshottests
+
+packages:
+  SnapshotTesting:
+    url: https://github.com/pointfreeco/swift-snapshot-testing
+    from: 1.18.4

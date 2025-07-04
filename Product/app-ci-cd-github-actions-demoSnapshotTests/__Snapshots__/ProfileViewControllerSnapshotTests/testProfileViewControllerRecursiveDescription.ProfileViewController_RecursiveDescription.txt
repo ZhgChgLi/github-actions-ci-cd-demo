@@ -1,0 +1,7 @@
+<UIView; frame = (0 0; 320 480); autoresize = W+H; backgroundColor = <UIDynamicSystemColor; name = systemBackgroundColor>; layer = <CALayer>>
+   | <UIImageView; frame = (110 40; 100 100); clipsToBounds = YES; userInteractionEnabled = NO; backgroundColor = <UIDynamicModifiedColor; contrast = normal, baseColor = <UIDynamicSystemColor; name = systemGray5Color>>; layer = <CALayer>>
+   | <UILabel; frame = (20 160; 280 28.6667); text = '張小明'; userInteractionEnabled = NO; backgroundColor = UIExtendedGrayColorSpace 0 0; layer = <_UILabelLayer>>
+   | <UILabel; frame = (20 196.667; 280 19.3333); text = 'zhangxiaoming@example.com'; userInteractionEnabled = NO; backgroundColor = UIExtendedGrayColorSpace 0 0; layer = <_UILabelLayer>>
+   | <UILabel; frame = (20 236; 280 38.3333); text = '我是一名 iOS 開發者，熱愛程式設計和創新技術。'; userInteractionEnabled = NO; backgroundColor = UIExtendedGrayColorSpace 0 0; layer = <_UILabelLayer>>
+   | <UIButton; frame = (100 304.333; 120 44); opaque = NO; backgroundColor = <UIDynamicModifiedColor; contrast = normal, baseColor = <UIDynamicCatalogSystemColor; name = systemBlueColor>>; layer = <CALayer>>
+   |    | <UIButtonLabel; frame = (29 13; 62 18); text = '編輯資料'; opaque = NO; userInteractionEnabled = NO; layer = <_UILabelLayer>>

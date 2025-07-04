@@ -1,0 +1,55 @@
+<UIView; frame = (0 0; 320 480); autoresize = W+H; backgroundColor = <UIDynamicSystemColor; name = systemBackgroundColor>; layer = <CALayer>>
+   | <UIScrollView; frame = (0 20; 320 460); clipsToBounds = YES; gestureRecognizers = <NSArray>; layer = <CALayer>; contentOffset: {0, 0}; contentSize: {320, 483}; adjustedContentInset: {0, 0, 0, 0}>
+   |    | <UIView; frame = (0 0; 320 483); backgroundColor = UIExtendedGrayColorSpace 0 0; layer = <CALayer>>
+   |    |    | <UILabel; frame = (20 20; 280 67); text = '歡迎回來，張小明！
+今天是美好的一天'; userInteractionEnabled = NO; backgroundColor = UIExtendedGrayColorSpace 0 0; layer = <_UILabelLayer>>
+   |    |    | <UIStackView; frame = (20 117; 280 100); layer = <CALayer>>
+   |    |    |    | <UIView; frame = (0 0; 82.6667 100); backgroundColor = <UIDynamicModifiedColor; contrast = normal, alpha = 0.1, baseColor = <UIDynamicCatalogSystemColor; name = systemBlueColor>>; layer = <CALayer>>
+   |    |    |    |    | <UILabel; frame = (28.3333 16; 26 47); text = '12'; userInteractionEnabled = NO; backgroundColor = UIExtendedGrayColorSpace 0 0; layer = <_UILabelLayer>>
+   |    |    |    |    | <UILabel; frame = (27 67; 28.6667 17); text = '任務'; userInteractionEnabled = NO; backgroundColor = UIExtendedGrayColorSpace 0 0; layer = <_UILabelLayer>>
+   |    |    |    | <UIView; frame = (98.6667 0; 82.6667 100); backgroundColor = <UIDynamicModifiedColor; contrast = normal, alpha = 0.1, baseColor = <UIDynamicCatalogSystemColor; name = systemGreenColor>>; layer = <CALayer>>
+   |    |    |    |    | <UILabel; frame = (33.6667 16; 15.6667 47); text = '8'; userInteractionEnabled = NO; backgroundColor = UIExtendedGrayColorSpace 0 0; layer = <_UILabelLayer>>
+   |    |    |    |    | <UILabel; frame = (27 67; 28.6667 17); text = '完成'; userInteractionEnabled = NO; backgroundColor = UIExtendedGrayColorSpace 0 0; layer = <_UILabelLayer>>
+   |    |    |    | <UIView; frame = (197.333 0; 82.6667 100); backgroundColor = <UIDynamicModifiedColor; contrast = normal, alpha = 0.1, baseColor = <UIDynamicCatalogSystemColor; name = systemOrangeColor>>; layer = <CALayer>>
+   |    |    |    |    | <UILabel; frame = (33.6667 16; 15.6667 47); text = '4'; userInteractionEnabled = NO; backgroundColor = UIExtendedGrayColorSpace 0 0; layer = <_UILabelLayer>>
+   |    |    |    |    | <UILabel; frame = (20 67; 43 17); text = '進行中'; userInteractionEnabled = NO; backgroundColor = UIExtendedGrayColorSpace 0 0; layer = <_UILabelLayer>>
+   |    |    | <UILabel; frame = (20 247; 280 24); text = '最近活動'; userInteractionEnabled = NO; backgroundColor = UIExtendedGrayColorSpace 0 0; layer = <_UILabelLayer>>
+   |    |    | <UITableView; frame = (20 287; 280 176); clipsToBounds = YES; gestureRecognizers = <NSArray>; backgroundColor = UIExtendedGrayColorSpace 0 0; layer = <CALayer>; contentOffset: {0, 0}; contentSize: {280, 176}; adjustedContentInset: {0, 0, 0, 0}; dataSource: <app_ci_cd_github_actions_demo.HomeViewController>>
+   |    |    |    | <UITableViewCell; frame = (0 132; 280 44); text = '收到新訊息'; autoresize = W; layer = <CALayer>>
+   |    |    |    |    | <_UISystemBackgroundView; frame = (0 0; 280 44); layer = <CALayer>; configuration = <UIBackgroundConfiguration; Base Style = List Plain Cell; backgroundColor = <UIDynamicSystemColor; name = tableCellPlainBackgroundColor>>>
+   |    |    |    |    |    | <UIView; frame = (0 0; 280 44); backgroundColor = <UIDynamicSystemColor; name = tableCellPlainBackgroundColor>; layer = <CALayer>>
+   |    |    |    |    | <UITableViewCellContentView; frame = (0 0; 253.667 44); gestureRecognizers = <NSArray>; layer = <CALayer>>
+   |    |    |    |    |    | <UITableViewLabel; frame = (16 0; 229.667 44); text = '收到新訊息'; userInteractionEnabled = NO; backgroundColor = UIExtendedGrayColorSpace 0 0; layer = <_UILabelLayer>>
+   |    |    |    |    | <_UITableCellAccessoryButton; frame = (253.667 15; 10.3333 14); opaque = NO; userInteractionEnabled = NO; layer = <CALayer>>
+   |    |    |    |    |    | <UIImageView; frame = (0 0; 10.3333 14); clipsToBounds = YES; opaque = NO; userInteractionEnabled = NO; layer = <CALayer>>
+   |    |    |    |    | <_UITableViewCellSeparatorView; frame = (16 43.6667; 264 0.333333); backgroundColor = <UIDynamicSystemColor; name = separatorColor>; layer = <CALayer>>
+   |    |    |    | <UITableViewCell; frame = (0 88; 280 44); text = '加入新專案'; autoresize = W; layer = <CALayer>>
+   |    |    |    |    | <_UISystemBackgroundView; frame = (0 0; 280 44); layer = <CALayer>; configuration = <UIBackgroundConfiguration; Base Style = List Plain Cell; backgroundColor = <UIDynamicSystemColor; name = tableCellPlainBackgroundColor>>>
+   |    |    |    |    |    | <UIView; frame = (0 0; 280 44); backgroundColor = <UIDynamicSystemColor; name = tableCellPlainBackgroundColor>; layer = <CALayer>>
+   |    |    |    |    | <UITableViewCellContentView; frame = (0 0; 253.667 44); gestureRecognizers = <NSArray>; layer = <CALayer>>
+   |    |    |    |    |    | <UITableViewLabel; frame = (16 0; 229.667 44); text = '加入新專案'; userInteractionEnabled = NO; backgroundColor = UIExtendedGrayColorSpace 0 0; layer = <_UILabelLayer>>
+   |    |    |    |    | <_UITableCellAccessoryButton; frame = (253.667 15; 10.3333 14); opaque = NO; userInteractionEnabled = NO; layer = <CALayer>>
+   |    |    |    |    |    | <UIImageView; frame = (0 0; 10.3333 14); clipsToBounds = YES; opaque = NO; userInteractionEnabled = NO; layer = <CALayer>>
+   |    |    |    |    | <_UITableViewCellSeparatorView; frame = (16 43.6667; 264 0.333333); backgroundColor = <UIDynamicSystemColor; name = separatorColor>; layer = <CALayer>>
+   |    |    |    | <UITableViewCell; frame = (0 44; 280 44); text = '更新個人資料'; autoresize = W; layer = <CALayer>>
+   |    |    |    |    | <_UISystemBackgroundView; frame = (0 0; 280 44); layer = <CALayer>; configuration = <UIBackgroundConfiguration; Base Style = List Plain Cell; backgroundColor = <UIDynamicSystemColor; name = tableCellPlainBackgroundColor>>>
+   |    |    |    |    |    | <UIView; frame = (0 0; 280 44); backgroundColor = <UIDynamicSystemColor; name = tableCellPlainBackgroundColor>; layer = <CALayer>>
+   |    |    |    |    | <UITableViewCellContentView; frame = (0 0; 253.667 44); gestureRecognizers = <NSArray>; layer = <CALayer>>
+   |    |    |    |    |    | <UITableViewLabel; frame = (16 0; 229.667 44); text = '更新個人資料'; userInteractionEnabled = NO; backgroundColor = UIExtendedGrayColorSpace 0 0; layer = <_UILabelLayer>>
+   |    |    |    |    | <_UITableCellAccessoryButton; frame = (253.667 15; 10.3333 14); opaque = NO; userInteractionEnabled = NO; layer = <CALayer>>
+   |    |    |    |    |    | <UIImageView; frame = (0 0; 10.3333 14); clipsToBounds = YES; opaque = NO; userInteractionEnabled = NO; layer = <CALayer>>
+   |    |    |    |    | <_UITableViewCellSeparatorView; frame = (16 43.6667; 264 0.333333); backgroundColor = <UIDynamicSystemColor; name = separatorColor>; layer = <CALayer>>
+   |    |    |    | <UITableViewCell; frame = (0 0; 280 44); text = '完成任務 A'; autoresize = W; layer = <CALayer>>
+   |    |    |    |    | <_UISystemBackgroundView; frame = (0 0; 280 44); layer = <CALayer>; configuration = <UIBackgroundConfiguration; Base Style = List Plain Cell; backgroundColor = <UIDynamicSystemColor; name = tableCellPlainBackgroundColor>>>
+   |    |    |    |    |    | <UIView; frame = (0 0; 280 44); backgroundColor = <UIDynamicSystemColor; name = tableCellPlainBackgroundColor>; layer = <CALayer>>
+   |    |    |    |    | <UITableViewCellContentView; frame = (0 0; 253.667 44); gestureRecognizers = <NSArray>; layer = <CALayer>>
+   |    |    |    |    |    | <UITableViewLabel; frame = (16 0; 229.667 44); text = '完成任務 A'; userInteractionEnabled = NO; backgroundColor = UIExtendedGrayColorSpace 0 0; layer = <_UILabelLayer>>
+   |    |    |    |    | <_UITableCellAccessoryButton; frame = (253.667 15; 10.3333 14); opaque = NO; userInteractionEnabled = NO; layer = <CALayer>>
+   |    |    |    |    |    | <UIImageView; frame = (0 0; 10.3333 14); clipsToBounds = YES; opaque = NO; userInteractionEnabled = NO; layer = <CALayer>>
+   |    |    |    |    | <_UITableViewCellSeparatorView; frame = (16 43.6667; 264 0.333333); backgroundColor = <UIDynamicSystemColor; name = separatorColor>; layer = <CALayer>>
+   |    |    |    | <_UIScrollViewScrollIndicator; frame = (274 -39; 3 36); alpha = 0; autoresize = LM; layer = <CALayer>>
+   |    |    |    |    | <UIView; frame = (0 0; 3 36); backgroundColor = UIExtendedGrayColorSpace 1 0.5; layer = <CALayer>>
+   |    |    |    | <_UIScrollViewScrollIndicator; frame = (-39 170; 36 3); alpha = 0; autoresize = TM; layer = <CALayer>>
+   |    |    |    |    | <UIView; frame = (0 0; 36 3); backgroundColor = UIExtendedGrayColorSpace 1 0.5; layer = <CALayer>>
+   |    | <_UIScrollViewScrollIndicator; frame = (-39 454; 36 3); alpha = 0; autoresize = TM; layer = <CALayer>>
+   |    |    | <UIView; frame = (0 0; 36 3); backgroundColor = UIExtendedGrayColorSpace 1 0.5; layer = <CALayer>>
