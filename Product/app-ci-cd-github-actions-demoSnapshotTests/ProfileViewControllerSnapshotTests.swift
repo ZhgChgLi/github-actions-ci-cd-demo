@@ -14,7 +14,7 @@ final class ProfileViewControllerSnapshotTests: XCTestCase {
     var profileViewController: ProfileViewController!
 
     override func setUpWithError() throws {
-        isRecording = false
+        isRecording = true
         profileViewController = ProfileViewController()
         profileViewController.overrideUserInterfaceStyle = .light
     }

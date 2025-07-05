@@ -14,7 +14,7 @@ final class HomeViewControllerSnapshotTests: XCTestCase {
     var homeViewController: HomeViewController!
 
     override func setUpWithError() throws {
-        isRecording = false
+        isRecording = true
         homeViewController = HomeViewController()
         homeViewController.overrideUserInterfaceStyle = .light
     }
