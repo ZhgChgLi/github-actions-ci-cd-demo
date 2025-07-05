@@ -34,7 +34,7 @@ Gemfile.lock
 vendor/
 
 # Mint
-.mint/
+mint/
 
 # Others
 *.DS_Store
