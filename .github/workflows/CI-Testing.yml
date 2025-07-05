@@ -34,7 +34,6 @@ jobs:
 
         - name: Read .ruby-version
           id: read_ruby_version
-          working-directory: ${{ env.folder }}/Solution/kkday-ios-member
           run: |
             RUBY_VERSION=$(cat .ruby-version)
             echo "RUBY_VERSION: ${RUBY_VERSION}"
