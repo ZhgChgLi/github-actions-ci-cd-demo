@@ -22,7 +22,7 @@ on:
         required: false
         type: string
 jobs:
-  Testing:
+  Deploy:
       runs-on: macos-15
       timeout-minutes: 80
   
