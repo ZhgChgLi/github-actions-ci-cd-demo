@@ -9,7 +9,7 @@
 import SnapshotTesting
 import XCTest
 
-// Record as iPhone 16 Pro 18.3.1
+// Record as iPhone 16 18.4
 final class ProfileViewControllerSnapshotTests: XCTestCase {
     var profileViewController: ProfileViewController!
 
