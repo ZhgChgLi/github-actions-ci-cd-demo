@@ -85,3 +85,11 @@ jobs:
             DEVELOPER_DIR: "/Applications/Xcode_${{ steps.read_xcode_version.outputs.xcode_version }}.app/Contents/Developer"
           run: |
             bundle exec fastlane run_all_tests device:"iPhone 16 (18.4)"
+
+        - uses: stefanzweifel/git-auto-commit-action@v4
+          if: always()
+          with:
+            commit_message: "debug"
+            commit_user_name: "github"
+            commit_user_email: "github@github.com"
+            commit_author: github <github@github.com>
