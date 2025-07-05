@@ -77,7 +77,8 @@ platform :ios do
     )
 
     firebase_app_distribution(
-      app: "1:957456175464:ios:5050fa994a8b4a02ab46dd",
+      app: "1:127683058219:ios:98896929fa131c7a80686e",
+      firebase_cli_token: ENV["FIREBASE_CLI_TOKEN"],
       release_notes: options[:release_notes] || "New beta build"
     )
   end
