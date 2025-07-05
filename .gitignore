@@ -25,11 +25,13 @@ Pods/
 *.xcodeproj
 
 # fastlane
-fastlane/test_output
+Product/fastlane/test_output
+Product/fastlane/report.xml
 
 # Bundler
 .bundle/
 Gemfile.lock
+vendor/
 
 # Mint
 .mint/

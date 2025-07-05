@@ -9,10 +9,12 @@ class UserManager {
         }
         return false
     }
+
     func logout() {
         loggedIn = false
     }
+
     func isLoggedIn() -> Bool {
         return loggedIn
     }
-} 
+}

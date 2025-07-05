@@ -9,16 +9,12 @@ import UIKit
 import WebKit
 
 class ViewController: UIViewController {
+    @IBOutlet var webView: WKWebView!
 
-    @IBOutlet weak var webView: WKWebView!
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        
+
         webView.load(URLRequest(url: URL(string: "https://zhgchg.li")!))
     }
-
-
 }
-
