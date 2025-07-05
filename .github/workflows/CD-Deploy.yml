@@ -41,17 +41,17 @@ jobs:
           env:
             BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
             P12_PASSWORD: ${{ secrets.BUILD_CERTIFICATE_P12_PASSWORD }}
-            # BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.BUILD_PROVISION_PROFILE_BASE64 }}
+            BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.BUILD_PROVISION_PROFILE_BASE64 }}
             KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
           run: |
             # create variables
             CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
-            # PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
+            PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
             KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
   
             # import certificate and provisioning profile from secrets
             echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
-            # echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode -o $PP_PATH
+            echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode -o $PP_PATH
   
             # create temporary keychain
             security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
@@ -63,9 +63,9 @@ jobs:
             security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
             security list-keychain -d user -s $KEYCHAIN_PATH
   
-            # apply provisioning profile
-            # mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-            # cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+            # apply provisioning profile XCode >= 16
+            mkdir -p ~/Library/Developer/Xcode/UserData/Provisioning\ Profiles
+            cp $PP_PATH ~/Library/Developer/Xcode/UserData/Provisioning\ Profiles
           
         - name: Read .xcode-version
           id: read_xcode_version

@@ -45,8 +45,7 @@ platform :ios do
 
   desc "Build and upload to Firebase App Distribution"
   lane :beta do |options|
-
-
+    
     if options[:version_number] && options[:version_number].to_s.strip != ""
       increment_version_number(version_number: options[:version_number])
     end
@@ -55,12 +54,26 @@ platform :ios do
       increment_build_number(build_number: options[:build_number])
     end
 
-    build_app(
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: "app-ci-cd-github-actions-demo.xcodeproj",
+      team_id: ENV['TEAM_ID'],
+      code_sign_identity: "iPhone Developer",
+      sdk: "iphoneos*",
+      profile_name: "cicd"
+    )
+
+    gym(
       scheme: "app-ci-cd-github-actions-demo",
       clean: true,
       export_method: "development",
       output_directory: "fastlane/build",
-      output_name: "app-ci-cd-github-actions-demo.ipa"
+      output_name: "app-ci-cd-github-actions-demo.ipa",
+      export_options: {
+          provisioningProfiles: {
+            "com.test.appcicdgithubactionsdemo" => "cicd",
+          },
+      }
     )
 
     firebase_app_distribution(

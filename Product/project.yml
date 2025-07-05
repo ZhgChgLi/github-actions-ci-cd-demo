@@ -26,8 +26,7 @@ targets:
         CFBundleIdentifier: $(PRODUCT_BUNDLE_IDENTIFIER)
     settings:
       base:
-        DEVELOPMENT_TEAM: UGFKKJS5G7
-        PRODUCT_BUNDLE_IDENTIFIER: li.zhgchg.appcicdgithubactionsdemo
+        PRODUCT_BUNDLE_IDENTIFIER: com.test.appcicdgithubactionsdemo
     cocoapods: true
 
   app-ci-cd-github-actions-demoTests:
@@ -41,8 +40,7 @@ targets:
       path: app-ci-cd-github-actions-demoTests/Info.plist
     settings:
       base:
-        DEVELOPMENT_TEAM: UGFKKJS5G7
-        PRODUCT_BUNDLE_IDENTIFIER: li.zhgchg.appcicdgithubactionsdemo.tests
+        PRODUCT_BUNDLE_IDENTIFIER: com.test.appcicdgithubactionsdemo.tests
 
   app-ci-cd-github-actions-demoUITests:
     type: bundle.ui-testing
@@ -55,8 +53,7 @@ targets:
       path: app-ci-cd-github-actions-demoUITests/Info.plist
     settings:
       base:
-        DEVELOPMENT_TEAM: UGFKKJS5G7
-        PRODUCT_BUNDLE_IDENTIFIER: li.zhgchg.appcicdgithubactionsdemo.uitests
+        PRODUCT_BUNDLE_IDENTIFIER: com.test.appcicdgithubactionsdemo.uitests
 
   app-ci-cd-github-actions-demoSnapshotTests:
     type: bundle.unit-test
@@ -73,8 +70,7 @@ targets:
       path: app-ci-cd-github-actions-demoSnapshotTests/Info.plist
       settings:
         base:
-          DEVELOPMENT_TEAM: UGFKKJS5G7
-          PRODUCT_BUNDLE_IDENTIFIER: li.zhgchg.appcicdgithubactionsdemo.snapshottests
+          PRODUCT_BUNDLE_IDENTIFIER: com.test.appcicdgithubactionsdemo.snapshottests
 
 packages:
   SnapshotTesting:
