@@ -7,7 +7,7 @@ MINT          := $(HOME)/.mint/bin/mint
 
 ## Setup
 .PHONY: setup
-setup:
+setup: check-mint
 	@echo "🔨 Installing Ruby dependencies..."
 	bundle config set path 'vendor/bundle'
 	bundle install
