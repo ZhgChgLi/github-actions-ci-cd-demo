@@ -16,6 +16,7 @@ final class SettingsViewControllerSnapshotTests: XCTestCase {
     override func setUpWithError() throws {
         isRecording = false
         settingsViewController = SettingsViewController()
+        settingsViewController.overrideUserInterfaceStyle = .light
     }
 
     override func tearDownWithError() throws {

@@ -16,6 +16,7 @@ final class ProfileViewControllerSnapshotTests: XCTestCase {
     override func setUpWithError() throws {
         isRecording = false
         profileViewController = ProfileViewController()
+        profileViewController.overrideUserInterfaceStyle = .light
     }
 
     override func tearDownWithError() throws {
