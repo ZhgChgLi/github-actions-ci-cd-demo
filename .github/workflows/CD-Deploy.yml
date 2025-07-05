@@ -128,6 +128,7 @@ jobs:
             BUILD_NUMBER: ${{ inputs.BUILD_NUMBER || '' }}
             RELEASE_NOTE: ${{ inputs.RELEASE_NOTE || '' }}
             AUTHOR: ${{ github.actor }}
+            TEAM_ID: ${{ secrets.TEAM_ID }}
             #
             FIREBASE_CLI_TOKEN: ${{ secrets.FIREBASE_CLI_TOKEN }}
             DEVELOPER_DIR: "/Applications/Xcode_${{ steps.read_xcode_version.outputs.xcode_version }}.app/Contents/Developer"
