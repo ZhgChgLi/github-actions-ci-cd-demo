@@ -42,4 +42,29 @@ platform :ios do
       output_types: "junit"
     )
   end
+
+  desc "Build and upload to Firebase App Distribution"
+  lane :beta do |options|
+
+
+    if options[:version_number]
+      increment_version_number(version_number: options[:version_number])
+    end
+  
+    build_number = options[:build_number] || Time.now.strftime("%Y%m%d%H%M")
+    increment_build_number(build_number: build_number)
+
+    build_app(
+      scheme: "app-ci-cd-github-actions-demo",
+      clean: true,
+      export_method: "development",
+      output_directory: "fastlane/build",
+      output_name: "app-ci-cd-github-actions-demo.ipa"
+    )
+
+    firebase_app_distribution(
+      app: "1:957456175464:ios:5050fa994a8b4a02ab46dd",
+      release_notes: options[:release_notes] || "New beta build"
+    )
+  end
 end
