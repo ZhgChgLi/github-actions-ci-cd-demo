@@ -14,7 +14,8 @@ final class HomeViewControllerSnapshotTests: XCTestCase {
     var homeViewController: HomeViewController!
 
     override func setUpWithError() throws {
-        isRecording = true
+        isRecording = false
+        UILabel.appearance().font = UIFont(name: "PingFang TC", size: 17)!
         homeViewController = HomeViewController()
         homeViewController.overrideUserInterfaceStyle = .light
     }

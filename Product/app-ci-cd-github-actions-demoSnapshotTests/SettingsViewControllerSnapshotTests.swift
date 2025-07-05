@@ -14,7 +14,8 @@ final class SettingsViewControllerSnapshotTests: XCTestCase {
     var settingsViewController: SettingsViewController!
 
     override func setUpWithError() throws {
-        isRecording = true
+        isRecording = false
+        UILabel.appearance().font = UIFont(name: "PingFang TC", size: 17)!
         settingsViewController = SettingsViewController()
         settingsViewController.overrideUserInterfaceStyle = .light
     }
