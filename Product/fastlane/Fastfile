@@ -47,12 +47,13 @@ platform :ios do
   lane :beta do |options|
 
 
-    if options[:version_number]
+    if options[:version_number] && options[:version_number].to_s.strip != ""
       increment_version_number(version_number: options[:version_number])
     end
-  
-    build_number = options[:build_number] || Time.now.strftime("%Y%m%d%H%M")
-    increment_build_number(build_number: build_number)
+
+    if options[:build_number] && options[:build_number].to_s.strip != ""
+      increment_build_number(build_number: build_number)
+    end
 
     build_app(
       scheme: "app-ci-cd-github-actions-demo",

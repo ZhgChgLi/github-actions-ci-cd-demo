@@ -1,0 +1,7 @@
+{
+    "key_id": "TEST",
+    "issuer_id": "just-a-demo-key-zzz",
+    "key": "-----BEGIN PRIVATE KEY-----\nZZzzz\nZzzz\nZZzzz\n-----END PRIVATE KEY-----",
+    "duration": 1200,
+    "in_house": false
+}
