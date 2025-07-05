@@ -27,7 +27,6 @@ targets:
     settings:
       base:
         DEVELOPMENT_TEAM: UGFKKJS5G7
-        CODE_SIGN_STYLE: Automatic
         PRODUCT_BUNDLE_IDENTIFIER: li.zhgchg.appcicdgithubactionsdemo
     cocoapods: true
 
@@ -43,7 +42,6 @@ targets:
     settings:
       base:
         DEVELOPMENT_TEAM: UGFKKJS5G7
-        CODE_SIGN_STYLE: Automatic
         PRODUCT_BUNDLE_IDENTIFIER: li.zhgchg.appcicdgithubactionsdemo.tests
 
   app-ci-cd-github-actions-demoUITests:
@@ -58,7 +56,6 @@ targets:
     settings:
       base:
         DEVELOPMENT_TEAM: UGFKKJS5G7
-        CODE_SIGN_STYLE: Automatic
         PRODUCT_BUNDLE_IDENTIFIER: li.zhgchg.appcicdgithubactionsdemo.uitests
 
   app-ci-cd-github-actions-demoSnapshotTests:
@@ -77,7 +74,6 @@ targets:
       settings:
         base:
           DEVELOPMENT_TEAM: UGFKKJS5G7
-          CODE_SIGN_STYLE: Automatic
           PRODUCT_BUNDLE_IDENTIFIER: li.zhgchg.appcicdgithubactionsdemo.snapshottests
 
 packages:
