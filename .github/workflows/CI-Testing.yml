@@ -45,12 +45,12 @@ jobs:
             ruby-version: "${{ steps.read_ruby_version.outputs.ruby_version }}"
 
         # Bundle cache
-        - name: Cache CocoaPods
+        - name: Cache Bundle
           uses: actions/cache@v3
           with:
             path: |
               ./vendor
-            key: ${{ runner.os }}-cocoapods-${{ hashFiles('Gemfile.lock') }}
+            key: ${{ runner.os }}-bundle-${{ hashFiles('Gemfile.lock') }}
             restore-keys: |
               ${{ runner.os }}-bundle-
 
