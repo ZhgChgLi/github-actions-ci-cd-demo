@@ -44,6 +44,35 @@ jobs:
           with:
             ruby-version: "${{ steps.read_ruby_version.outputs.ruby_version }}"
 
+        # Bundle cache
+        - name: Cache Bundle
+          uses: actions/cache@v3
+          with:
+            path: |
+              ./vendor
+            key: ${{ runner.os }}-bundle-${{ hashFiles('Gemfile.lock') }}
+            restore-keys: |
+              ${{ runner.os }}-bundle-
+
+        # CocoaPods cache
+        - name: Cache CocoaPods
+          uses: actions/cache@v3
+          with:
+            path: |
+              ./Product/Pods
+            key: ${{ runner.os }}-cocoapods-${{ hashFiles('Product/Podfile.lock') }}
+            restore-keys: |
+              ${{ runner.os }}-cocoapods-
+  
+        # Mint cache
+        - name: Cache Mint
+          uses: actions/cache@v3
+          with:
+            path: ./mint
+            key: ${{ runner.os }}-mint-${{ hashFiles('Mintfile') }}
+            restore-keys: |
+              ${{ runner.os }}-mint-
+
         
         - name: Install Dependency
           run: |
@@ -53,6 +82,6 @@ jobs:
         - name: run tests
           working-directory: ./Product/
           env:
-            DEVELOPER_DIR: "/Applications/Xcode-${{ steps.read_xcode_version.outputs.xcode_version }}.app/Contents/Developer"
+            DEVELOPER_DIR: "/Applications/Xcode_${{ steps.read_xcode_version.outputs.xcode_version }}.app/Contents/Developer"
           run: |
             bundle exec fastlane run_all_tests device:"iPhone 14 Pro (16.4)"
