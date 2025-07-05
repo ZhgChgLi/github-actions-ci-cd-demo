@@ -1,0 +1,58 @@
+name: CI-Testing
+
+run-name: "[CI-Testing] ${{ github.event.pull_request.title || github.ref }}"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+  
+jobs:
+  Testing:
+      runs-on: macos-15
+      timeout-minutes: 80
+  
+      # use zsh
+      defaults:
+        run:
+          shell: zsh {0}
+  
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v3
+          with:
+            lfs: true
+            
+        - name: Read .xcode-version
+          id: read_xcode_version
+          run: |
+            XCODE_VERSION=$(cat .xcode-version)
+            echo "XCODE_VERSION: ${XCODE_VERSION}"
+            echo "xcode_version=${XCODE_VERSION}" >> $GITHUB_OUTPUT
+
+        - name: Read .ruby-version
+          id: read_ruby_version
+          working-directory: ${{ env.folder }}/Solution/kkday-ios-member
+          run: |
+            RUBY_VERSION=$(cat .ruby-version)
+            echo "RUBY_VERSION: ${RUBY_VERSION}"
+            echo "ruby_version=${RUBY_VERSION}" >> $GITHUB_OUTPUT
+
+        - name: Set up Ruby
+          uses: ruby/setup-ruby@v1
+          with:
+            ruby-version: "${{ steps.read_ruby_version.outputs.ruby_version }}"
+
+        
+        - name: Install Dependency
+          run: |
+            make setup
+
+        - name: run tests
+          working-directory: ./Product/
+          env:
+            DEVELOPER_DIR: "/Applications/Xcode-${{ steps.read_xcode_version.outputs.xcode_version }}.app/Contents/Developer"
+          run: |
+            bundle exec fastlane run_all_tests device:"iPhone 14 Pro (16.4)"
