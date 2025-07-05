@@ -15,7 +15,6 @@ final class SettingsViewControllerSnapshotTests: XCTestCase {
 
     override func setUpWithError() throws {
         isRecording = false
-        UILabel.appearance().font = UIFont(name: "PingFang TC", size: 17)!
         settingsViewController = SettingsViewController()
         settingsViewController.overrideUserInterfaceStyle = .light
     }
@@ -78,7 +77,7 @@ final class SettingsViewControllerSnapshotTests: XCTestCase {
         // 創建導航控制器
         let navigationController = UINavigationController(rootViewController: settingsViewController)
         navigationController.view.frame = CGRect(x: 0, y: 0, width: 375, height: 812)
-
+        navigationController.overrideUserInterfaceStyle = .light
         // 載入視圖
         navigationController.loadViewIfNeeded()
 

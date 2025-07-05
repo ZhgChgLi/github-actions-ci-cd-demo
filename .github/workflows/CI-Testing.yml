@@ -79,10 +79,10 @@ jobs:
             make setup
             make install
 
-        # - name: run tests
-        #   working-directory: ./Product/
-        #   env:
-        #     DEVELOPER_DIR: "/Applications/Xcode_${{ steps.read_xcode_version.outputs.xcode_version }}.app/Contents/Developer"
-        #   run: |
-        #     bundle exec fastlane run_all_tests device:"iPhone 16 (18.4)"
+        - name: run tests
+          working-directory: ./Product/
+          env:
+            DEVELOPER_DIR: "/Applications/Xcode_${{ steps.read_xcode_version.outputs.xcode_version }}.app/Contents/Developer"
+          run: |
+            bundle exec fastlane run_all_tests device:"iPhone 16 (18.4)"
 

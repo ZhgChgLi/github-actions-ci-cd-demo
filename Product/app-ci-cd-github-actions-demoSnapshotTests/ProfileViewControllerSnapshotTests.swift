@@ -15,7 +15,6 @@ final class ProfileViewControllerSnapshotTests: XCTestCase {
 
     override func setUpWithError() throws {
         isRecording = false
-        UILabel.appearance().font = UIFont(name: "PingFang TC", size: 17)!
         profileViewController = ProfileViewController()
         profileViewController.overrideUserInterfaceStyle = .light
     }
