@@ -84,4 +84,4 @@ jobs:
           env:
             DEVELOPER_DIR: "/Applications/Xcode_${{ steps.read_xcode_version.outputs.xcode_version }}.app/Contents/Developer"
           run: |
-            bundle exec fastlane run_all_tests device:"iPhone 14 Pro (16.4)"
+            bundle exec fastlane run_all_tests device:"iPhone 16 (18.4)"
