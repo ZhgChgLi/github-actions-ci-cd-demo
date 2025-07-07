@@ -1,6 +1,9 @@
 # Workflow(Action) 名稱
 name: Pull Reqeust Automation - Daily Checker
 
+# Actions Log 的標題名稱
+run-name: "Pull Reqeust Automation - Daily Checker"
+
 # 觸發事件
 on:
   # 排程定時自動執行
