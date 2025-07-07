@@ -93,6 +93,7 @@ jobs:
       # 解決的問題是：有很小的機率會出現在同時 pod install 時拉 cocoapods repos 出現衝突(因為預設都是用) $HOME/.cocoapods/
       # GitHub Hosted Runner 則不需此設定
       # - name: Change Cocoapods Repos Folder
+      #   if: contains(runner.labels, 'self-hosted')
       #   run: |
       #     # 每個 Runner 用自己的 .cocoapods 資料夾，防止資源衝突
       #     mkdir -p "$HOME/.cocoapods-${{ env.RUNNER_NAME }}/"
