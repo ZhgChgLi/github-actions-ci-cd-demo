@@ -200,11 +200,11 @@ jobs:
 
           # Testing Output 不為空
           if [[ -n "$TESTING_OUTPUT" ]]; then
-              # 如果 Testing Output 包含 "Error building"，則設 is_building_error=true 給 Actions 環境變數，為 Build 就失敗
+              # 如果 Testing Output 包含 "Error building"，則設 is_build_error=true 給 Actions 環境變數，為 Build 就失敗
               # 如果 Testing Output 包含 "Tests have failed"，則設 is_test_error=true 給 Actions 環境變數，為測試失敗
 
               if [[ $TESTING_OUTPUT == *"Error building"* ]]; then
-                  echo "is_building_error=true" >> $GITHUB_OUTPUT
+                  echo "is_build_error=true" >> $GITHUB_OUTPUT
               elif [[ $TESTING_OUTPUT == *"Tests have failed"* ]]; then
                   echo "is_test_error=true" >> $GITHUB_OUTPUT
               fi
@@ -222,7 +222,7 @@ jobs:
         # if:
         # 上一步(Testing) success or
         # 上一步(Testing) failed and is_test_error (build failed 不執行這個 step)
-        if: ${{ (steps.testing.outputs.is_test_error == 'true' && failure()) || success() }}
+        if: ${{ (failure() && steps.testing.outputs.is_test_error == 'true') || success() }}
         with:
           check_name: "Testing Report"
           comment: true
@@ -230,4 +230,35 @@ jobs:
           require_tests: true
           detailed_summary: true
           report_paths: "./Product/fastlane/test_output/*.junit"
-      
+
+      # 測試建置失敗 Comment
+      - name: Build Failure Comment
+        # if:
+        # 上一步(Testing) failed and is_build_error and 有 PR(Issue) Number
+        # 
+        if: ${{ failure() && steps.testing.outputs.is_build_error == 'true' && github.event.issue.number }}
+        uses: actions/github-script@v6
+        env:
+          action_url: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}"
+        with:
+            script: |
+              const action_url = process.env.action_url
+              const pullRequest = context.payload.pull_request || {}
+              const commitSha = pullRequest.head?.sha || context.sha
+              const creator = pullRequest.user?.login || context.actor
+        
+              const commentBody = [
+                `# 專案或測試建置失敗 ❌`,
+                `請確認您的 Pull Request 是否可以正確編譯與執行測試。`,
+                ``,
+                `🔗 **Action**: [View Workflow Run](${action_url})`,
+                `📝 **Commit**: ${commitSha}`,
+                `👤 **Author**: @${creator}`
+              ].join('\n')
+        
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: commentBody
+              })
