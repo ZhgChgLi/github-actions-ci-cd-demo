@@ -1,6 +1,6 @@
 @testable import app_ci_cd_github_actions_demo
 import XCTest
-
+// YES!
 class CalculatorTests: XCTestCase {
     var calculator: Calculator!
     override func setUp() {
@@ -14,8 +14,8 @@ class CalculatorTests: XCTestCase {
     }
 
     func testAdd() {
-        XCTAssertEqual(calculator.add(2, 3), 25)
-        XCTAssertEqual(calculator.add(-1, 1), 20)
+        XCTAssertEqual(calculator.add(2, 3), 5)
+        XCTAssertEqual(calculator.add(-1, 1), 0)
     }
 
     func testSubtract() {
