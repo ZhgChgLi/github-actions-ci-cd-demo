@@ -165,10 +165,15 @@ jobs:
         id: testing
         # 指定工作目錄，這樣後續指令就不用在特別 cd ./Product/
         working-directory: ./Product/
-        # 指定這個 Job 要使用 XCode_x.x.x 指定的版本執行
         env:
+          # 指定這個 Job 要使用 XCode_x.x.x 指定的版本執行
           DEVELOPER_DIR: "/Applications/Xcode_${{ steps.read_xcode_version.outputs.xcode_version }}.app/Contents/Developer"
+          
+          # Repo -> Settings -> Actions secrets and variables -> variables
+          # 使用的模擬器
           SIMULATOR_NAME: ${{ vars.SIMULATOR_NAME }}
+
+          # 當前 Runner 名稱
           RUNNER_NAME: ${{ runner.name }}
           
           # 提升 XCodebuild 指令 timeout 時間, retry 次數
