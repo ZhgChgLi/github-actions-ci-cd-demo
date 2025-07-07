@@ -30,9 +30,22 @@ jobs:
       # 目標分支：main, develop or master...etc
       BRANCH: "main"
 
+  deploy-env:
+    runs-on: ubuntu-latest
+    outputs:
+      DATE_STRING: ${{ steps.get_date.outputs.DATE_STRING }}
+    steps:
+      - name: Get Date String
+        id: get_date
+        run: |
+          VERSION_DATE=$(date -u '+%Y%m%d')
+          echo "${VERSION_DATE}"
+          echo "DATE_STRING=${VERSION_DATE}" >> $GITHUB_ENV
+          echo "DATE_STRING=${VERSION_DATE}" >> $GITHUB_OUTPUT
+    
   deploy:
     # Job 預設是並發執行，用 needs 限制需等待 testing 完成才執行
-    needs: [testing]
+    needs: [testing, deploy-env]
     # 如果測試成功才執行
     if: ${{ needs.testing.result == 'success' }}
     # Reuse Workflow (workflow_call)
@@ -40,8 +53,8 @@ jobs:
     # 傳遞所有 Secrets 給 CD-Deploy.yml
     secrets: inherit
     with:
-      VERSION_NUMBER: NightlyBuild-${{ github.run_started[0:10] | replace('-', '') }}
-      RELEASE_NOTE: NightlyBuild-${{ github.run_started[0:10] | replace('-', '') }}
+      VERSION_NUMBER: NightlyBuild-${{ needs.deploy-env.outputs.DATE_STRING }}
+      RELEASE_NOTE: NightlyBuild-${{ needs.deploy-env.outputs.DATE_STRING }}
       # 目標分支：main, develop or master...etc
       BRANCH: "main"
 
