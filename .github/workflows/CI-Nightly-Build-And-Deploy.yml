@@ -44,7 +44,7 @@ jobs:
           echo "DATE_STRING=${VERSION_DATE}" >> $GITHUB_OUTPUT
     
   deploy:
-    # Job 預設是並發執行，用 needs 限制需等待 testing 完成才執行
+    # Job 預設是並發執行，用 needs 限制需等待 testing 和 deploy-env 完成才執行
     needs: [testing, deploy-env]
     # 如果測試成功才執行
     if: ${{ needs.testing.result == 'success' }}
