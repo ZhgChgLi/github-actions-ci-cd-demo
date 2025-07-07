@@ -143,7 +143,7 @@ jobs:
           # 執行 Makefile 中封裝的 Setup 指令，對應成指令大概是：
           # brew install mint
           # bundle config set path 'vendor/bundle'
-	  # bundle install
+          # bundle install
           # mint bootstrap
           # ...
           # 等等 setup 指令
