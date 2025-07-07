@@ -202,7 +202,7 @@ jobs:
           # 使用的模擬器名稱
           SIMULATOR_NAME: ${{ vars.SIMULATOR_NAME }}
           # 模擬器的 iOS 版本
-          SIMULATOR_IOS_VERSION: ${{ var.SIMULATOR_IOS_VERSION }}
+          SIMULATOR_IOS_VERSION: ${{ vars.SIMULATOR_IOS_VERSION }}
 
           # 當前 Runner 名稱
           RUNNER_NAME: ${{ runner.name }}
