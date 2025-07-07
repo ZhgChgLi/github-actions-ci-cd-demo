@@ -21,7 +21,7 @@ jobs:
   # 測試工作
   testing:
     # Reuse Workflow (workflow_call)
-    uses: ./.github/workflows/CD-Testing.yml
+    uses: ./.github/workflows/CI-Testing.yml
     # 傳遞所有 Secrets 給 CD-Testing.yml
     secrets: inherit
     with:
