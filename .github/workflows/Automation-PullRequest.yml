@@ -1,6 +1,9 @@
 # Workflow(Action) 名稱
 name: Pull Reqeust Automation
 
+# Actions Log 的標題名稱
+run-name: "[Pull Reqeust Automation] ${{ github.event.pull_request.title || github.ref }}"
+
 # 觸發事件
 on:
   # PR 事件
