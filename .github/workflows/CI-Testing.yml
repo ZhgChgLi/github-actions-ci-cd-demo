@@ -28,7 +28,17 @@ on:
         options:
           - run_unit_tests
           - run_all_tests
-
+  # 其他 Workflow 呼叫此 Workflow 觸發
+  workflow_call:
+    # 表單 Inputs 欄位
+    inputs:
+      # 執行的 Test Fastlane Lane
+      TestLane:
+        description: 'Test Lane'
+        default: 'run_unit_tests'
+        # workflow_call inputs 不支援 choice
+        type: string
+  
 # Job 工作項目
 # Job 會並發執行
 jobs:
