@@ -21,7 +21,7 @@ on:
     # 表單 Inputs 欄位
     inputs:
       # 執行的 Test Fastlane Lane
-      TestLane:
+      Test_Lane:
         description: 'Test Lane'
         default: 'run_unit_tests'
         type: choice
@@ -33,7 +33,7 @@ on:
     # 表單 Inputs 欄位
     inputs:
       # 執行的 Test Fastlane Lane
-      TestLane:
+      Test_Lane:
         description: 'Test Lane'
         default: 'run_unit_tests'
         # workflow_call inputs 不支援 choice
@@ -187,8 +187,8 @@ jobs:
         working-directory: ./Product/
         env:
           # 測試計劃，全跑還是只跑單元測試
-          # 如為開 PR 觸發 inputs 會是空的，則用預設值 onlyUnitTest
-          Test_Lane: ${{ github.event.inputs.TestLane || 'run_unit_tests' }}
+          # 如為開 PR 觸發則使用 run_unit_tests，否則看 inputs.Test_Lane 的值，預設值 run_all_tests
+          Test_Lane: ${{ github.event_name == 'pull_request' && 'run_unit_tests' || github.event.inputs.Test_Lane || 'run_all_tests' }}
           
           # 指定這個 Job 要使用 XCode_x.x.x 指定的版本執行
           DEVELOPER_DIR: "/Applications/Xcode_${{ steps.read_xcode_version.outputs.xcode_version }}.app/Contents/Developer"
