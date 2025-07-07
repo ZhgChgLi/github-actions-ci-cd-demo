@@ -15,7 +15,7 @@ on:
   # 手動表單觸發
   workflow_dispatch:
     # 表單 Inputs 欄位
-    inputs:
+    inputs: &workflow_dispatch_input
       # App 版本號
       VERSION_NUMBER:
         description: 'Version Number of the app (e.g., 1.0.0). Auto-detect from the Xcode project if left blank.'
@@ -31,6 +31,10 @@ on:
         description: 'Release notes of the deployment.'
         required: false
         type: string
+  # 其他 Workflow 呼叫此 Workflow 觸發
+  workflow_call:
+    # 復用 workflow_dispatch input
+    inputs: *workflow_dispatch_input
 
 # 定義全域靜態變數
 env:
