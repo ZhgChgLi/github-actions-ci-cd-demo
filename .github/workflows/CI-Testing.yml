@@ -18,6 +18,16 @@ on:
     types: [opened, synchronize, reopened]
   # 手動表單觸發
   workflow_dispatch:
+    # 表單 Inputs 欄位
+    inputs:
+      # 執行的 Test Fastlane Lane
+      TestLane:
+        description: 'Test Lane'
+        default: 'run_unit_tests'
+        type: choice
+        options:
+          - run_unit_tests
+          - run_all_tests
 
 # Job 工作項目
 # Job 會並發執行
@@ -166,6 +176,10 @@ jobs:
         # 指定工作目錄，這樣後續指令就不用在特別 cd ./Product/
         working-directory: ./Product/
         env:
+          # 測試計劃，全跑還是只跑單元測試
+          # 如為開 PR 觸發 inputs 會是空的，則用預設值 onlyUnitTest
+          Test_Lane: ${{ github.event.inputs.TestLane || 'run_unit_tests' }}
+          
           # 指定這個 Job 要使用 XCode_x.x.x 指定的版本執行
           DEVELOPER_DIR: "/Applications/Xcode_${{ steps.read_xcode_version.outputs.xcode_version }}.app/Contents/Developer"
           
@@ -197,7 +211,7 @@ jobs:
           EXIT_CODE=0
           
           # 所有輸出都寫入檔案
-          bundle exec fastlane run_unit_tests device:"${SIMULATOR_NAME} (${SIMULATOR_IOS_VERSION})" | tee "$RUNNER_TEMP/testing_output.txt"
+          bundle exec fastlane ${Test_Lane} device:"${SIMULATOR_NAME} (${SIMULATOR_IOS_VERSION})" | tee "$RUNNER_TEMP/testing_output.txt"
           # 如果目前 EXIT_CODE 是 0，則將 ${pipestatus[1]} 賦值給 EXIT_CODE
           [[ $EXIT_CODE -eq 0 ]] && EXIT_CODE=${pipestatus[1]}
 
