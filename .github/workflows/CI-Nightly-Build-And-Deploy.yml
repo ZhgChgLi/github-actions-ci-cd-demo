@@ -1,8 +1,8 @@
 # Workflow(Action) 名稱
-name: CI - Nightly Build And Deploy
+name: CI-Nightly Build And Deploy
 
 # Actions Log 的標題名稱
-run-name: "[CI - Nightly Build And Deploy] ${{ github.ref }}"
+run-name: "[CI-Nightly Build And Deploy] ${{ github.ref }}"
 
 # 觸發事件
 on:
@@ -10,8 +10,8 @@ on:
   # https://crontab.guru/
   # UTC 時間
   schedule:
-    # UTC 的 01:00 = 每天 UTC+8 的 09:00
-    - cron: '0 1 * * *'
+    # UTC 的 19:00 = 每天 UTC+8 的 03:00
+    - cron: '0 19 * * *'
   # 手動觸發
   workflow_dispatch:
 
