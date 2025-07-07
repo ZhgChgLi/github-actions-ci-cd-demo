@@ -14,8 +14,8 @@ class CalculatorTests: XCTestCase {
     }
 
     func testAdd() {
-        XCTAssertEqual(calculator.add(2, 3), 5)
-        XCTAssertEqual(calculator.add(-1, 1), 0)
+        XCTAssertEqual(calculator.add(2, 3), 25)
+        XCTAssertEqual(calculator.add(-1, 1), 20)
     }
 
     func testSubtract() {
