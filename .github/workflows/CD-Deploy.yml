@@ -182,7 +182,7 @@ jobs:
 
       # ========== Cache Setting Steps ==========
       # 請注意，就算是 self-hosted，Cache 目前也是 Cloud Cache 會計算用量
-      # 規則：7 天未 hit 自動刪除、單個 Cache 上限 10 GB
+      # 規則：7 天未 hit 自動刪除、單個 Cache 上限 10 GB、Action 成功才會 Cache
       # Public Repo: 免費無限制
       # Private Repo: 5 GB 起
       # Self-hosted 可以自己用 shell script 撰寫 Cache & Restore 策略或使用其他工具協助
