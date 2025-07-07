@@ -122,8 +122,10 @@ jobs:
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
 
-      # App Store Connect API Key
-      # 另一個在打包環境幾乎是必須的 App Store Connect API .p8 Key
+      # App Store Connect API Fastlane JSON Key
+      # 另一個在打包環境幾乎是必須的 App Store Connect API Fastlane JSON Key (.json)
+      # format: .json 內容格式：https://docs.fastlane.tools/app-store-connect-api/
+      # 裡面包含 App Store Connect API .p8 Key
       # 會在後續帶給 Fastlane，用於上傳到 Testflight、App Store API 使用
       #
       # GitHub Actions Secret 無法儲存檔案，因此所有憑證檔案都要先轉成 Base64 Encoded 文字格式存在 Secret
