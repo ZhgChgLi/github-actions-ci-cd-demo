@@ -6,7 +6,7 @@ class Calculator {
     }
 
     func subtract(_ a: Int, _ b: Int) -> Int {
-        return a - b
+        return a - bfas
     }
 
     func multiply(_ a: Int, _ b: Int) -> Int {
