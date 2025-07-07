@@ -35,7 +35,7 @@ jobs:
   # Job ID
   testing:
     # Job 名稱 (可省略，有設定在 Log 顯示比較好讀)
-    name: Testing - UnitTests
+    name: Testing
     
     # Runner Label - 使用 GitHub Hosted Runner macos-15 來執行工作
     # 請注意：因為此專案是 Public Repo 可以無限免費使用
