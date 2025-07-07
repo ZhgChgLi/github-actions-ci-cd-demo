@@ -21,7 +21,7 @@ on:
     # 表單 Inputs 欄位
     inputs:
       # 執行的 Test Fastlane Lane
-      Test_Lane:
+      TEST_LANE:
         description: 'Test Lane'
         default: 'run_unit_tests'
         type: choice
@@ -33,7 +33,7 @@ on:
     # 表單 Inputs 欄位
     inputs:
       # 執行的 Test Fastlane Lane
-      Test_Lane:
+      TEST_LANE:
         description: 'Test Lane'
         default: 'run_unit_tests'
         # workflow_call inputs 不支援 choice
@@ -187,8 +187,8 @@ jobs:
         working-directory: ./Product/
         env:
           # 測試計劃，全跑還是只跑單元測試
-          # 如為開 PR 觸發則使用 run_unit_tests，否則看 inputs.Test_Lane 的值，預設值 run_all_tests
-          Test_Lane: ${{ github.event_name == 'pull_request' && 'run_unit_tests' || github.event.inputs.Test_Lane || 'run_all_tests' }}
+          # 如為開 PR 觸發則使用 run_unit_tests，否則看 inputs.TEST_LANE 的值，預設值 run_all_tests
+          TEST_LANE: ${{ github.event_name == 'pull_request' && 'run_unit_tests' || github.event.inputs.TEST_LANE || 'run_all_tests' }}
           
           # 指定這個 Job 要使用 XCode_x.x.x 指定的版本執行
           DEVELOPER_DIR: "/Applications/Xcode_${{ steps.read_xcode_version.outputs.xcode_version }}.app/Contents/Developer"
@@ -221,7 +221,7 @@ jobs:
           EXIT_CODE=0
           
           # 所有輸出都寫入檔案
-          bundle exec fastlane ${Test_Lane} device:"${SIMULATOR_NAME} (${SIMULATOR_IOS_VERSION})" | tee "$RUNNER_TEMP/testing_output.txt"
+          bundle exec fastlane ${TEST_LANE} device:"${SIMULATOR_NAME} (${SIMULATOR_IOS_VERSION})" | tee "$RUNNER_TEMP/testing_output.txt"
           # 如果目前 EXIT_CODE 是 0，則將 ${pipestatus[1]} 賦值給 EXIT_CODE
           [[ $EXIT_CODE -eq 0 ]] && EXIT_CODE=${pipestatus[1]}
 
