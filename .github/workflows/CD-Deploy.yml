@@ -281,3 +281,14 @@ jobs:
 
           # 執行 Fastlane 打包＆部署 Lane
           bundle exec fastlane beta release_notes:"${RELEASE_NOTE}" version_number:"${VERSION_NUMBER}" build_number:"${BUILD_NUMBER}"
+
+      # GitHub Actions 建議的 self-hosted 安全性設定：
+      # ref: https://docs.github.com/en/actions/how-tos/use-cases-and-examples/deploying/installing-an-apple-certificate-on-macos-runners-for-xcode-development#required-clean-up-on-self-hosted-runners
+      # 對應 Step: Install the Apple certificate and provisioning profile
+      # 用途是刪除機器上下載下來的金鑰憑證
+      # 如果你是用 Match 則需要改寫成 Match 的 Clean
+      - name: Clean up keychain and provisioning profile
+        if: ${{ always() && contains(runner.labels, 'self-hosted') }}
+        run: |
+          security delete-keychain $RUNNER_TEMP/app-signing.keychain-db
+          rm ~/Library/MobileDevice/Provisioning\ Profiles/build_pp.mobileprovision
