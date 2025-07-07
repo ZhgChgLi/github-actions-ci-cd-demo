@@ -175,8 +175,8 @@ jobs:
 
           # 如果是 self-hosted 在同一台機器起多個 Runner 會出現搶模擬器的問題 (文章後會講)
           # 要避免這問題建議將模擬名稱命名成 Runner 名稱，每個 Runner 都設一個模擬器，這樣就不會互搶導致測試失敗
-          # e.g. bundle exec fastlane run_unit_tests device:"${RUNNER_NAME} (18.4)"
-          # 這邊是用 GitHub Hosted Runner 沒這問題，所以直接用 device:"${SIMULATOR_NAME}"
+          # e.g. bundle exec fastlane run_unit_tests device:"${RUNNER_NAME} (${SIMULATOR_IOS_VERSION})"
+          # 這邊是用 GitHub Hosted Runner 沒這問題，所以直接用 device:"${SIMULATOR_NAME} (${SIMULATOR_IOS_VERSION})"
 
           # 發生錯誤不直接退出並將所有輸出都寫入 temp/testing_output.txt 檔案
           # 後續我們會分析檔案內容區分出是 Build Failed 還是 Test Failed，Comment 不同訊息到 PR
@@ -188,27 +188,25 @@ jobs:
           EXIT_CODE=0
           
           # 所有輸出都寫入檔案
-          bundle exec fastlane run_unit_tests device:"${SIMULATOR_NAME}" | tee "$RUNNER_TEMP/testing_output.txt"
+          bundle exec fastlane run_unit_tests device:"${SIMULATOR_NAME} (${SIMULATOR_IOS_VERSION})" | tee "$RUNNER_TEMP/testing_output.txt"
           # 如果目前 EXIT_CODE 是 0，則將 ${pipestatus[1]} 賦值給 EXIT_CODE
           [[ $EXIT_CODE -eq 0 ]] && EXIT_CODE=${pipestatus[1]}
 
           # 恢復出錯就退出
           set -e
 
-          # 讀取 Testing Output
-          TESTING_OUTPUT=$(<"$RUNNER_TEMP/testing_output.txt")
-
-          # Testing Output 不為空
-          if [[ -n "$TESTING_OUTPUT" ]]; then
-              # 如果 Testing Output 包含 "Error building"，則設 is_build_error=true 給 Actions 環境變數，為 Build 就失敗
-              # 如果 Testing Output 包含 "Tests have failed"，則設 is_test_error=true 給 Actions 環境變數，為測試失敗
-
-              if [[ $TESTING_OUTPUT == *"Error building"* ]]; then
-                  echo "is_build_error=true" >> $GITHUB_OUTPUT
-              elif [[ $TESTING_OUTPUT == *"Tests have failed"* ]]; then
-                  echo "is_test_error=true" >> $GITHUB_OUTPUT
-              fi
+          # 檢查 Testing Output
+          # 如果 Testing Output 包含 "Error building"，則設 is_build_error=true 給 Actions 環境變數，為 Build 就失敗
+          # 如果 Testing Output 包含 "Tests have failed"，則設 is_test_error=true 給 Actions 環境變數，為測試失敗
+          
+          if grep -q "Error building" "$RUNNER_TEMP/testing_output.txt"; then
+            echo "is_build_error=true" >> $GITHUB_OUTPUT
+            echo "❌ Detected Build Error"
+          elif grep -q "Tests have failed" "$RUNNER_TEMP/testing_output.txt"; then
+            echo "is_test_error=true" >> $GITHUB_OUTPUT
+            echo "❌ Detected Test Error"
           fi
+          
 
           # 恢復 Exit Code Output
           exit $EXIT_CODE
