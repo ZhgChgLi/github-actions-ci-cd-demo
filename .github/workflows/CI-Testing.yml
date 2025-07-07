@@ -7,7 +7,7 @@ run-name: "[CI-Testing] ${{ github.event.pull_request.title || github.ref }}"
 # 同個 Concurrency Group 如果有新的 Job 會取消正在跑的
 # 例如 Push Commit 觸發的任務還沒執行就又 Push Commit 時，會取消前一個任務
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 # 觸發事件
