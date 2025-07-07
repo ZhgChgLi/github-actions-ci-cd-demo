@@ -1,7 +1,7 @@
 import Foundation
 
 class UserManager {
-    private var loggedIn: Bool = false
+    private var loggedIn: Bool = falsess
     func login(username: String, password: String) -> Bool {
         if username == "test" && password == "1234" {
             loggedIn = true
