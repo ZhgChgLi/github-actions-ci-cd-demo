@@ -1,88 +1,177 @@
+# Workflow(Action) 名稱
 name: CI-Testing
 
+# Actions Log 的標題名稱
 run-name: "[CI-Testing] ${{ github.event.pull_request.title || github.ref }}"
 
+# 同個 Concurrency Group 如果有新的 Job 會取消正在跑的
+# 例如 Push Commit 觸發的任務還沒執行就又 Push Commit 時，會取消前一個任務
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
+# 觸發事件
 on:
+  # PR 事件
+  pull_request:
+    # PR - 開啟、重開、有新 Push Commit 時
+    types: [opened, synchronize, reopened]
+  # 手動表單觸發
   workflow_dispatch:
-  
+
+# Job 工作項目
+# Job 會並發執行
 jobs:
-  Testing:
-      runs-on: macos-15
-      timeout-minutes: 80
-  
-      # use zsh
-      defaults:
-        run:
-          shell: zsh {0}
-  
-      steps:
-        - name: Checkout repository
-          uses: actions/checkout@v3
-          with:
-            lfs: true
-            
-        - name: Read .xcode-version
-          id: read_xcode_version
-          run: |
-            XCODE_VERSION=$(cat .xcode-version)
-            echo "XCODE_VERSION: ${XCODE_VERSION}"
-            echo "xcode_version=${XCODE_VERSION}" >> $GITHUB_OUTPUT
+  # Job ID
+  testing:
+    # Job 名稱 (可省略，有設定在 Log 顯示比較好讀)
+    name: Testing - UnitTests
+    
+    # Runner Label - 使用 GitHub Hosted Runner macos-15 來執行工作
+    # 請注意：因為此專案是 Public Repo 可以無限免費使用
+    # 請注意：因為此專案是 Public Repo 可以無限免費使用
+    # 請注意：因為此專案是 Public Repo 可以無限免費使用
+    # 如果是 Private Repo 需要按計量收費，macOS 機器是最貴的(10倍)，可能跑 10 次就達到 2,000 分鐘免費上限
+    # 建議使用 self-hosted Runner
+    runs-on: macos-15
 
-        - name: Read .ruby-version
-          id: read_ruby_version
-          run: |
-            RUBY_VERSION=$(cat .ruby-version)
-            echo "RUBY_VERSION: ${RUBY_VERSION}"
-            echo "ruby_version=${RUBY_VERSION}" >> $GITHUB_OUTPUT
+    # 設定最長 Timeout 時間，防止異常情況發生時無止盡的等待
+    timeout-minutes: 30
 
-        - name: Set up Ruby
-          uses: ruby/setup-ruby@v1
-          with:
-            ruby-version: "${{ steps.read_ruby_version.outputs.ruby_version }}"
+    # use zsh
+    # 可省略，只是我習慣用 zsh，預設是 bash
+    defaults:
+      run:
+        shell: zsh {0}
+          
+    # 工作步驟
+    # 工作步驟會照順序執行  
+    steps:
+      # git clone 當前專案 & checkout 到執行的分支
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          # Git Large File Storage，我們的測試環境用不到
+          # default: false
+          lfs: false
+          
+          # 如果你想 Checkout 其他分支，可以這樣指定：
+          # 但一般情況我們都是在哪個分支做就做，比較少 Actions 在 A 分支但實際 Checkout B 分支
+          # ref: feature/awesome-branch
 
-        # Bundle cache
-        - name: Cache Bundle
-          uses: actions/cache@v3
-          with:
-            path: |
-              ./vendor
-            key: ${{ runner.os }}-bundle-${{ hashFiles('Gemfile.lock') }}
-            restore-keys: |
-              ${{ runner.os }}-bundle-
+      # ========== Env Setup Steps ==========
+      
+      # 讀取專案指定的 XCode 版本
+      # 在後續之中，我們自己手動指定使用的 XCode_x.x.x.app
+      # 而不使用 xcversion，因為 xcversion 已經 sunset 不穩定。 
+      - name: Read .xcode-version
+        id: read_xcode_version
+        run: |
+          XCODE_VERSION=$(cat .xcode-version)
+          echo "XCODE_VERSION: ${XCODE_VERSION}"
+          echo "xcode_version=${XCODE_VERSION}" >> $GITHUB_OUTPUT
 
-        # CocoaPods cache
-        - name: Cache CocoaPods
-          uses: actions/cache@v3
-          with:
-            path: |
-              ./Product/Pods
-            key: ${{ runner.os }}-cocoapods-${{ hashFiles('Product/Podfile.lock') }}
-            restore-keys: |
-              ${{ runner.os }}-cocoapods-
-  
-        # Mint cache
-        - name: Cache Mint
-          uses: actions/cache@v3
-          with:
-            path: ./mint
-            key: ${{ runner.os }}-mint-${{ hashFiles('Mintfile') }}
-            restore-keys: |
-              ${{ runner.os }}-mint-
+          # 也可以直接在這指定全域 XCode 版本，這樣就不用在後續步驟指定 DEVELOPER_DIR
+          # 但此指令需要 sudoer 權限，如果是 self-hosted runner 就要確定 runner 執行環境有 sudo 權限
+          # sudo xcode-select -s "/Applications/Xcode_${XCODE_VERSION}.app/Contents/Developer"
 
-        
-        - name: Install Dependency
-          run: |
-            make setup
-            make install
+      # 讀取專案指定的 Ruby 版本
+      - name: Read .ruby-version
+        id: read_ruby_version
+        run: |
+          RUBY_VERSION=$(cat .ruby-version)
+          echo "RUBY_VERSION: ${RUBY_VERSION}"
+          echo "ruby_version=${RUBY_VERSION}" >> $GITHUB_OUTPUT
 
-        - name: run tests
-          working-directory: ./Product/
-          env:
-            DEVELOPER_DIR: "/Applications/Xcode_${{ steps.read_xcode_version.outputs.xcode_version }}.app/Contents/Developer"
-          run: |
-            bundle exec fastlane run_all_tests device:"iPhone 16 (18.4)"
+      # 安裝或設定 Runner Ruby 版本成專案指定版本
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "${{ steps.read_ruby_version.outputs.ruby_version }}"
+
+      # 可設可不設，原因是之前在 self-hosted 起多個 runner 跑 CI/CD 因為 cocoapods repos 是共用目錄
+      # 解決的問題是：有很小的機率會出現在同時 pod install 時拉 cocoapods repos 出現衝突(因為預設都是用) $HOME/.cocoapods/
+      # GitHub Hosted Runner 則不需此設定
+      # - name: Change Cocoapods Repos Folder
+      #   run: |
+      #     # 每個 Runner 用自己的 .cocoapods 資料夾，防止資源衝突
+      #     mkdir -p "$HOME/.cocoapods-${{ env.RUNNER_NAME }}/"
+      #     export CP_HOME_DIR="$HOME/.cocoapods-${{ env.RUNNER_NAME }}"
+      #     rm -f "$HOME/.cocoapods-${{ env.RUNNER_NAME }}/repos/cocoapods/.git/index.lock"
+
+      # ========== Cache Setting Steps ==========
+      # 請注意，就算是 self-hosted，Cache 目前也是 Cloud Cache 會計算用量 (免費只有 1GB)
+      # Self-hosted 可以自己用 shell script 撰寫 Cache & Restore 策略或使用其他工具協助
+      
+      # Bundle Cache (Gemfile)
+      # 對應 Makefile 中我們指定了 Bundle  安裝路徑 ./vendor 下
+      - name: Cache Bundle
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./vendor
+          key: ${{ runner.os }}-bundle-${{ hashFiles('Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bundle-
+
+      # CocoaPods Cache (Podfile)
+      # 默認就是 專案/Pods 下
+      - name: Cache CocoaPods
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./Product/Pods
+          key: ${{ runner.os }}-cocoapods-${{ hashFiles('Product/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cocoapods-
+
+      # Mint cache
+      # 對應 Makefile 中我們指定的 Mint 安裝路徑 ./mint 下
+      - name: Cache Mint
+        uses: actions/cache@v3
+        with:
+          path: ./mint
+          key: ${{ runner.os }}-mint-${{ hashFiles('Mintfile') }}
+          restore-keys: |
+            ${{ runner.os }}-mint-
+
+      # ====================
+
+      # 專案 Setup & 依賴安裝
+      - name: Setup & Install Dependency
+        run: |
+          # 執行 Makefile 中封裝的 Setup 指令，對應成指令大概是：
+          # brew install mint
+          # bundle config set path 'vendor/bundle'
+	        # bundle install
+          # mint bootstrap
+          # ...
+          # 等等 setup 指令
+          make setup
+
+          # 執行 Makefile 中封裝的 Install 指令，對應成指令大概是：
+          # mint run yonaskolb/XcodeGen --quiet
+          # bundle exec pod install
+          # ...
+          # 等等 setup 指令
+          make install
+
+      # 執行 Fastlane Unit 測試 Lane
+      - name: Run UnitTests
+        id: testing
+        # 指定工作目錄，這樣後續指令就不用在特別 cd ./Product/
+        working-directory: ./Product/
+        # 指定這個 Job 要使用 XCode_x.x.x 指定的版本執行
+        env:
+          DEVELOPER_DIR: "/Applications/Xcode_${{ steps.read_xcode_version.outputs.xcode_version }}.app/Contents/Developer"
+          SIMULATOR_NAME: ${{ vars.SIMULATOR_NAME }}
+          RUNNER_NAME: ${{ runner.name }}
+        run: |
+
+          # 如果是 self-hosted 在同一台機器起多個 Runner 會出現搶模擬器的問題 (文章後會講)
+          # 要避免這問題建議將模擬名稱命名成 Runner 名稱，每個 Runner 都設一個模擬器，這樣就不會互搶導致測試失敗
+          # e.g. bundle exec fastlane run_unit_tests device:"${RUNNER_NAME} (18.4)"
+          # 這邊是用 GitHub Hosted Runner 沒這問題，所以直接用
+          bundle exec fastlane run_unit_tests device:"${SIMULATOR_NAME}"
+          
 
