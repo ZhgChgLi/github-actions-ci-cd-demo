@@ -181,7 +181,7 @@ jobs:
           make install
 
       # 執行 Fastlane Unit 測試 Lane
-      - name: Run UnitTests
+      - name: Run Tests
         id: testing
         # 指定工作目錄，這樣後續指令就不用在特別 cd ./Product/
         working-directory: ./Product/
