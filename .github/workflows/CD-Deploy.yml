@@ -32,6 +32,7 @@ on:
         required: false
         type: string
   # 其他 Workflow 呼叫此 Workflow 觸發
+  # Nightly Build 會呼叫使用
   workflow_call:
     inputs:
       # App 版本號
@@ -49,6 +50,10 @@ on:
         description: 'Release notes of the deployment.'
         required: false
         type: string
+      BRANCH:
+        description: 'Branch'
+        type: string
+
 
 # 定義全域靜態變數
 env:
@@ -90,9 +95,10 @@ jobs:
           # default: false
           lfs: false
           
-          # 如果你想 Checkout 其他分支，可以這樣指定：
-          # 但一般情況我們都是在哪個分支做就做，比較少 Actions 在 A 分支但實際 Checkout B 分支
-          # ref: feature/awesome-branch
+          # 如果有指定則 Checkout 指定分支，沒有則使用預設(當前分支)
+          # 因 on: schedule 事件只能在 main 主分支執行，因此想做 Nightly Build 之類的工作就需要指定分支
+          # e.g. on: schedule -> main 分支，Nightly Build master 分支
+          ref: ${{ github.event.inputs.BRANCH || '' }}
 
       # ========== Certificates Steps ==========
       
