@@ -1,0 +1,90 @@
+# Workflow(Action) 名稱
+name: CI - Nightly Build And Deploy
+
+# Actions Log 的標題名稱
+run-name: "[CI - Nightly Build And Deploy] ${{ github.ref }}"
+
+# 觸發事件
+on:
+  # 排程定時自動執行
+  # https://crontab.guru/
+  # UTC 時間
+  schedule:
+    # UTC 的 01:00 = 每天 UTC+8 的 09:00
+    - cron: '0 1 * * *'
+  # 手動觸發
+  workflow_dispatch:
+
+# Job 工作項目
+# Job 會並發執行
+jobs:
+  # 測試工作
+  testing:
+    # Reuse Workflow (workflow_call)
+    uses: ./.github/workflows/CD-Testing.yml
+    # 傳遞所有 Secrets 給 CD-Testing.yml
+    secrets: inherit
+    with:
+      # 執行全部測試
+      TEST_LANE: "run_all_tests"
+      # 目標分支：main, develop or master...etc
+      BRANCH: "main"
+
+  deploy:
+    # Job 預設是並發執行，用 needs 限制需等待 testing 完成才執行
+    needs: [testing]
+    # 如果測試成功才執行
+    if: ${{ needs.testing.result == 'success' }}
+    # Reuse Workflow (workflow_call)
+    uses: ./.github/workflows/CD-Deploy.yml
+    # 傳遞所有 Secrets 給 CD-Deploy.yml
+    secrets: inherit
+    with:
+      VERSION_NUMBER: NightlyBuild-${{ github.run_started[0:10] | replace('-', '') }}
+      RELEASE_NOTE: NightlyBuild-${{ github.run_started[0:10] | replace('-', '') }}
+      # 目標分支：main, develop or master...etc
+      BRANCH: "main"
+
+# ----- Slack Notify -----
+  testing-failed-slack-notify:
+    needs: [testing]
+    runs-on: ubuntu-latest
+    if: ${{ needs.testing.result == 'failure' }}
+    steps:
+      - name: Post text to a Slack channel
+        uses: slackapi/slack-github-action@v2.1.0
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel: ${{ vars.SLACK_TEAM_CHANNEL_ID }}
+            text: ":x: Nightly Build - Testing 失敗\nWorkflow: <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Run>"
+
+  deploy-failed-slack-notify:
+    needs: [deploy]
+    runs-on: ubuntu-latest
+    if: ${{ needs.deploy.result == 'failure' }}
+    steps:
+      - name: Post text to a Slack channel
+        uses: slackapi/slack-github-action@v2.1.0
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel: ${{ vars.SLACK_TEAM_CHANNEL_ID }}
+            text: ":x: Nightly Build Deploy 失敗\nWorkflow: <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Run>"
+
+  deploy-success-slack-notify:
+    needs: [deploy]
+    runs-on: ubuntu-latest
+    if: ${{ needs.deploy.result == 'success' }}
+    steps:
+      - name: Post text to a Slack channel
+        uses: slackapi/slack-github-action@v2.1.0
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel: ${{ vars.SLACK_TEAM_CHANNEL_ID }}
+            text: ":white_check_mark: Nightly Build Deploy 成功\nWorkflow: <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Run>"
+
