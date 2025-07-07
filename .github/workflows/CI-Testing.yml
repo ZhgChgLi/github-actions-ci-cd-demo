@@ -232,9 +232,9 @@ jobs:
       # 測試建置失敗 Comment
       - name: Build Failure Comment
         # if:
-        # 上一步(Testing) failed and is_build_error and 有 PR(Issue) Number
+        # 上一步(Testing) failed and is_build_error and 有 PR Number
         # 
-        if: ${{ failure() && steps.testing.outputs.is_build_error == 'true' && github.event.issue.number }}
+        if: ${{ failure() && steps.testing.outputs.is_build_error == 'true' && github.event.pull_request.number }}
         uses: actions/github-script@v6
         env:
           action_url: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}"
@@ -257,6 +257,6 @@ jobs:
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: context.issue.number,
+                issue_number: context.payload.pull_request.number,
                 body: commentBody
               })
