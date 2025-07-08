@@ -1,0 +1,134 @@
+# Workflow(Action) 名稱
+name: CD-Deploy-Form
+
+# Actions Log 的標題名稱
+run-name: "[CD-Deploy-Form] ${{ github.ref }}"
+
+# 同個 Concurrency Group 如果有新的 Job 會取消正在跑的
+# 例如 重複觸發相同分支的打包任務，會取消前一個任務
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# 觸發事件
+on:
+  # 手動表單觸發
+  workflow_dispatch:
+    # 表單 Inputs 欄位
+    inputs:
+      # App 版本號
+      VERSION_NUMBER:
+        description: 'Version Number of the app (e.g., 1.0.0). Auto-detect from the Xcode project if left blank.'
+        required: false
+        type: string
+      # App Build Number
+      BUILD_NUMBER:
+        description: 'Build number of the app (e.g., 1). Will use a timestamp if left blank.'
+        required: false
+        type: string
+      # App Release Note
+      RELEASE_NOTE:
+        description: 'Release notes of the deployment.'
+        required: false
+        type: string
+      # 觸發者的 Slack User ID
+      SLACK_USER_ID:
+        description: 'Slack user id.'
+        required: true
+        type: string
+      # 觸發者的 Email
+      TRIGGER_EMAIL:
+        description: 'Triggered by email.'
+        required: true
+        type: string
+        
+# Job 工作項目
+jobs:
+  # 開始打包時傳送 Slack 訊息
+  # Job ID
+  start-message:
+    # 小工作直接用 GitHub Hosted Runner 跑，用量不大
+    runs-on: ubuntu-latest
+    
+    # 設定最長 Timeout 時間，防止異常情況發生時無止盡的等待
+    # 正常情況不可能跑超過 5 分鐘
+    timeout-minutes: 5
+
+    # 工作步驟
+    steps:
+      - name: Post a Start Slack Message
+        id: slack
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel: ${{ inputs.SLACK_USER_ID }}
+            text: "已收到打包請求。\nID: <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.run_id }}>\nBranch: ${{ github.ref_name }}\ncc'ed <@${{ inputs.SLACK_USER_ID }}>"
+    # Job Output 給後續 Job 使用
+    # ts = Slack 訊息 ID，後續通知才可以 Reply 在同個 Threads
+    outputs:
+      ts: ${{ steps.slack.outputs.ts }}
+
+  deploy:
+    # Job 預設是並發執行，用 needs 限制需等待 start-message 完成才執行
+    # 執行打包部署任務
+    needs: start-message
+    uses: ./.github/workflows/CD-Deploy.yml
+    secrets: inherit
+    with:
+      VERSION_NUMBER: ${{ inputs.VERSION_NUMBER }}
+      BUILD_NUMBER: ${{ inputs.BUILD_NUMBER }}
+      RELEASE_NOTE: ${{ inputs.RELEASE_NOTE }}
+      AUTHOR: ${{ inputs.TRIGGER_EMAIL }}
+
+  # 打包部署任務成功訊息
+  end-message-success:
+    needs: [start-message, deploy]
+    if: ${{ needs.deploy.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Post a Success Slack Message
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel: ${{ inputs.SLACK_USER_ID }}
+            thread_ts: "${{ needs.start-message.outputs.ts }}"
+            text: "✅ 打包部署成功。\n\ncc'ed <@${{ inputs.SLACK_USER_ID }}>"
+  
+  # 打包部署任務失敗訊息
+  end-message-failure:
+    needs: [deploy, start-message]
+    if: ${{ needs.deploy.result == 'failure' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Post a Failure Slack Message
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel: ${{ inputs.SLACK_USER_ID }}
+            thread_ts: "${{ needs.start-message.outputs.ts }}"
+            text: "❌ 打包部署失敗，請檢查執行狀況結果或稍後再試。\n\ncc'ed <@${{ inputs.SLACK_USER_ID }}>"
+
+  # 打包部署任務取消訊息
+  end-message-cancelled:
+    needs: [deploy, start-message]
+    if: ${{ needs.deploy.result == 'cancelled' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Post a Cancelled Slack Message
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel: ${{ inputs.SLACK_USER_ID }}
+            thread_ts: "${{ needs.start-message.outputs.ts }}"
+            text: ":black_square_for_stop: 打包部署已取消。\n\ncc'ed <@${{ inputs.SLACK_USER_ID }}>"
