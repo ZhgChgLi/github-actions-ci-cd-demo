@@ -37,8 +37,8 @@ on:
         required: true
         type: string
       # 觸發者的 Email
-      TRIGGER_EMAIL:
-        description: 'Triggered by email.'
+      AUTHOR:
+        description: 'Trigger author email.'
         required: true
         type: string
         
@@ -80,7 +80,7 @@ jobs:
       VERSION_NUMBER: ${{ inputs.VERSION_NUMBER }}
       BUILD_NUMBER: ${{ inputs.BUILD_NUMBER }}
       RELEASE_NOTE: ${{ inputs.RELEASE_NOTE }}
-      AUTHOR: ${{ inputs.TRIGGER_EMAIL }}
+      AUTHOR: ${{ inputs.AUTHOR }}
 
   # 打包部署任務成功訊息
   end-message-success:
