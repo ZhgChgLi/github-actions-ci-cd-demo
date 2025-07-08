@@ -53,7 +53,11 @@ on:
       BRANCH:
         description: 'Branch'
         type: string
-
+      # Specify Author
+      AUTHOR:
+        description: 'Specify action trigger author.'
+        required: false
+        type: string
 
 # 定義全域靜態變數
 env:
@@ -273,7 +277,7 @@ jobs:
           VERSION_NUMBER: ${{ inputs.VERSION_NUMBER || '' }}
           BUILD_NUMBER: ${{ inputs.BUILD_NUMBER || '' }}
           RELEASE_NOTE: ${{ inputs.RELEASE_NOTE || '' }}
-          AUTHOR: ${{ github.actor }}
+          AUTHOR: ${{ github.event.inputs.AUTHOR || github.actor }}
 
           # Repo -> Settings -> Actions secrets and variables -> secrets
           # Firebase CLI Token 密鑰 (取得方式請參考文章)
