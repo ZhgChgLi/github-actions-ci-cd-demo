@@ -24,8 +24,16 @@ jobs:
   label-pr-by-file-count:
     # Job 名稱 (可省略，有設定在 Log 顯示比較好讀)
     name: Label PR by changes file count
+
+    # 如果這個 Job 失敗，不影響整個 Workflow，繼續其他 Job
+    continue-on-error: true
+    
+    # 設定最長 Timeout 時間，防止異常情況發生時無止盡的等待
+    timeout-minutes: 10
+
     # Runner Label - 使用 GitHub Hosted Runner ubuntu-latest 來執行工作
     # 如果是 Private Repo 會計算用量，超過可能會產生費用
+    # 但這種自動化小工作不太容易用過量
     runs-on: ubuntu-latest
 
     # 工作步驟
@@ -97,9 +105,16 @@ jobs:
     name: Automatically assign to self if no assignee is specified
     # 因為是共用觸發事件，所以在 Job 上自己判斷，當是 Pull Request Opened(首次建立) 時才執行 Job 否則會 Skipped
     if: github.event_name == 'pull_request' && github.event.action == 'opened'
+
+    # 如果這個 Job 失敗，不影響整個 Workflow，繼續其他 Job
+    continue-on-error: true
+    
+    # 設定最長 Timeout 時間，防止異常情況發生時無止盡的等待
+    timeout-minutes: 10
     
     # Runner Label - 使用 GitHub Hosted Runner ubuntu-latest 來執行工作
     # 如果是 Private Repo 會計算用量，超過可能會產生費用
+    # 但這種自動化小工作不太容易用過量
     runs-on: ubuntu-latest
 
     steps:
@@ -131,3 +146,29 @@ jobs:
                 body: `🔧 No assignee was set, so I have assigned this to myself (@${me}).`
               });
             }
+  # ---------
+  append-author-to-pr-description:
+    name: Append author to PR description
+    # 因為是共用觸發事件，所以在 Job 上自己判斷，當是 Pull Request Opened(首次建立) 時才執行 Job 否則會 Skipped
+    if: github.event_name == 'pull_request' && github.event.action == 'opened'
+    
+    # 如果這個 Job 失敗，不影響整個 Workflow，繼續其他 Job
+    continue-on-error: true
+    
+    # 設定最長 Timeout 時間，防止異常情況發生時無止盡的等待
+    timeout-minutes: 10
+    
+    # Runner Label - 使用 GitHub Hosted Runner ubuntu-latest 來執行工作
+    # 如果是 Private Repo 會計算用量，超過可能會產生費用
+    # 但這種自動化小工作不太容易用過量
+    runs-on: ubuntu-latest
+    steps:
+      - name: Append author to PR description
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          AUTHOR_TAG: '@${{ github.event.pull_request.user.login }}'
+        run: |
+          PR_BODY=$(gh pr view $PR_NUMBER --repo ${{ github.repository }} --json body -q ".body")
+          NEW_BODY=$(printf "%s\n\nCreated by %s" "$PR_BODY" "$AUTHOR_TAG")
+          gh pr edit $PR_NUMBER --repo ${{ github.repository }} --body "$NEW_BODY"
