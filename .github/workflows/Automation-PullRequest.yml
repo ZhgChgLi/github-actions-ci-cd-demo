@@ -165,6 +165,8 @@ jobs:
     steps:
       - name: Append author to PR description
         env:
+          # secrets.GITHUB_TOKEN 是 GitHub Actions 執行時自動產生的 Token，不需自行在 Secrets 設定，擁有一些 GitHub Repo API Scopes 權限
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           AUTHOR_TAG: '@${{ github.event.pull_request.user.login }}'
         run: |
