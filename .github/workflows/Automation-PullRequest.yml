@@ -165,7 +165,6 @@ jobs:
     steps:
       - name: Append author to PR description
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           AUTHOR_TAG: '@${{ github.event.pull_request.user.login }}'
         run: |
