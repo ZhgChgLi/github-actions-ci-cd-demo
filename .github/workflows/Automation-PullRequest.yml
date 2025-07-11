@@ -46,11 +46,13 @@ jobs:
         # 注入外部環境參數到執行階段
         env:
           # secrets.GITHUB_TOKEN 是 GitHub Actions 執行時自動產生的 Token，不需自行在 Secrets 設定，擁有一些 GitHub Repo API Scopes 權限
+          # gh(GitHub) cli 需要注入 GH_TOKEN 到 ENV，gh 才有權限操作 
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         # Shell script
         # GitHub Hosted Runner 內建都有安裝好 gh cli，不需要安裝 Job 就能直接使用
         run: |
-          # ${{ github }} 是 GitHub Actions 執行時會自動注入的變數參考，可以從中取得執行階段資訊
+          # ${{ github.xxxx }} 是 GitHub Actions Context 佔位符不是真的變數，會在解析階段轉換成對應值
+          # https://docs.github.com/en/actions/reference/contexts-reference
           
           # 取得 PR 編號:
           PR_NUMBER=${{ github.event.pull_request.number }}
@@ -166,6 +168,9 @@ jobs:
       - name: Append author to PR description
         env:
           # secrets.GITHUB_TOKEN 是 GitHub Actions 執行時自動產生的 Token，不需自行在 Secrets 設定，擁有一些 GitHub Repo API Scopes 權限
+          # gh(GitHub) cli 需要注入 GH_TOKEN 到 ENV，gh 才有權限操作
+          # ${{ github.xxxx }} 是 GitHub Actions Context 佔位符不是真的變數，會在解析階段轉換成對應值
+          # https://docs.github.com/en/actions/reference/contexts-reference
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           AUTHOR_TAG: '@${{ github.event.pull_request.user.login }}'
