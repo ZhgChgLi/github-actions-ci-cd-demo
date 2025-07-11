@@ -82,7 +82,7 @@ jobs:
         # gh CLI does NOT use GITHUB_TOKEN by default; requires GH_TOKEN
         continue-on-error: true
         run: |
-          PR_COUNT=$(gh pr list --json number --jq 'length')
+          PR_COUNT=$(gh pr list --repo $GITHUB_REPOSITORY --json number --jq 'length')
           echo "Found $PR_COUNT open pull requests"
       
       - name: gh CLI with GH_TOKEN (expected to succeed)
@@ -90,7 +90,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         # Assign GH_TOKEN so gh CLI can authenticate
         run: |
-          PR_COUNT=$(gh pr list --json number --jq 'length')
+          PR_COUNT=$(gh pr list --repo $GITHUB_REPOSITORY --json number --jq 'length')
           echo "Found $PR_COUNT open pull requests"
       
       - name: github-script auto-authentication (no GH_TOKEN needed)
