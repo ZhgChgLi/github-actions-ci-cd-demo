@@ -75,12 +75,7 @@ jobs:
             //   state: "open"
             //  });
       - name: Check if GITHUB_TOKEN is auto-injected
-        run: |
-          if [ -z "$GITHUB_TOKEN" ]; then
-            echo "❌ GITHUB_TOKEN is NOT set"
-          else
-            echo "✅ GITHUB_TOKEN is set"
-          fi
+        run: echo $GITHUB_TOKEN
       
       - name: gh CLI without GH_TOKEN (expected to fail)
         # gh CLI does NOT use GITHUB_TOKEN by default; requires GH_TOKEN
