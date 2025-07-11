@@ -51,8 +51,9 @@ jobs:
         # Shell script
         # GitHub Hosted Runner 內建都有安裝好 gh cli，不需要安裝 Job 就能直接使用
         run: |
-          # ${{ github.xxxx }} 是 GitHub Actions Context 佔位符不是真的變數，會在解析階段轉換成對應值
-          # https://docs.github.com/en/actions/reference/contexts-reference
+          #   ${{ github.xxx }} 是 GitHub Actions Context 表達式
+          #   不是 Shell 變數，而是 YAML 解析階段由 GitHub Actions 替換成對應值
+          #   其他參數：https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
           
           # 取得 PR 編號:
           PR_NUMBER=${{ github.event.pull_request.number }}
@@ -127,11 +128,17 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            // github-script 中會自動注入到 context 變數供 javascript 直接引用
+            // https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
+            
             const issue = context.payload.pull_request; // 如果要連 Issue 一起支援可寫成 context.payload.issue || context.payload.pull_request
             const assignees = issue.assignees || [];
             const me = context.actor;
 
             if (assignees.length === 0) {
+              // github-script 中的 github 物件是 Octokit REST API 實例
+              // 用來操作 github api 使用
+              
               // Assignee 設成自己
               await github.rest.issues.addAssignees({
                 owner: context.repo.owner,
@@ -169,9 +176,11 @@ jobs:
         env:
           # secrets.GITHUB_TOKEN 是 GitHub Actions 執行時自動產生的 Token，不需自行在 Secrets 設定，擁有一些 GitHub Repo API Scopes 權限
           # gh(GitHub) cli 需要注入 GH_TOKEN 到 ENV，gh 才有權限操作
-          # ${{ github.xxxx }} 是 GitHub Actions Context 佔位符不是真的變數，會在解析階段轉換成對應值
-          # https://docs.github.com/en/actions/reference/contexts-reference
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+          #   ${{ github.xxx }} 是 GitHub Actions Context 表達式
+          #   不是 Shell 變數，而是 YAML 解析階段由 GitHub Actions 替換成對應值
+          #   其他參數：https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
           PR_NUMBER: ${{ github.event.pull_request.number }}
           AUTHOR_TAG: '@${{ github.event.pull_request.user.login }}'
         run: |
