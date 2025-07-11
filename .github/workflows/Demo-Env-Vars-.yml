@@ -22,8 +22,6 @@ jobs:
         run: |
           # Sehll Script:
 
-          echo ${FROM_REF}
-
           # 引用自訂注入的 ENV 變數內容
           # ${SAY_MY_NAME} or $SAY_MY_NAME 都可以
           # ${XX} 遇到字串拼接比較好用:
@@ -40,6 +38,10 @@ jobs:
           # ✅ 在其他環境可用 export 或 ENV 預先定義相同變數
           # 🔗 https://docs.github.com/en/actions/learn-github-actions/environment-variables
           BRANCH_NAME_FROM_ENV_VARS="${GITHUB_REF}"
+          
+          echo "FROM_REF: ${FROM_REF}"
+          echo "BRANCH_NAME_FROM_CONTEXT: ${BRANCH_NAME_FROM_CONTEXT}"
+          echo "BRANCH_NAME_FROM_ENV_VARS: ${BRANCH_NAME_FROM_ENV_VARS}"
       - name: print-github-script-env
         uses: actions/github-script@v7
         env:
@@ -51,6 +53,7 @@ jobs:
             // GitHub Script: (JavaScript (Node.js)):
 
             // 從 process.env 取 ENV 值
+            console.log(`HI: ${process.env.SAY_MY_NAME}`);
             console.log(`FROM_REF: ${process.env.FROM_REF}`);
 
             // github-script 中會自動注入到 context 變數供 javascript 直接引用
