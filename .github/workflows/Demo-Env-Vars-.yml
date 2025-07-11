@@ -8,10 +8,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          lfs: false
       - name: print-env
         run: env
       - name: context-vars-vs-vars
