@@ -1,0 +1,72 @@
+name: Demo-Env-Vars
+
+on:
+  workflow_dispatch:
+
+jobs:
+  print-env-vars:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: print-env
+        run: env
+      - name: context-vars-vs-vars
+        env:
+          SAY_MY_NAME: "Heisenberg"
+          # GitHub Actions Context 表達式，同下方解釋
+          FROM_REF: "${{ github.ref }}"
+        run: |
+          # Sehll Script:
+
+          echo ${FROM_REF}
+
+          # 引用自訂注入的 ENV 變數內容
+          # ${SAY_MY_NAME} or $SAY_MY_NAME 都可以
+          # ${XX} 遇到字串拼接比較好用:
+          echo "HI: ${SAY_MY_NAME}"
+          
+          # 💡 GitHub Actions Context 表達式
+          # 這不是 shell 變數，而是 YAML 解析階段由 GitHub Actions 替換成對應值
+          # ⚠ 在本機或非 GitHub Actions 環境執行會失敗
+          # 🔗 https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
+          BRANCH_NAME_FROM_CONTEXT="${{ github.ref }}"
+          
+          # 💡 GitHub Actions 執行階段的環境變數
+          # 這些變數在 runner 執行 shell 時由 GitHub Actions 自動注入
+          # ✅ 在其他環境可用 export 或 ENV 預先定義相同變數
+          # 🔗 https://docs.github.com/en/actions/learn-github-actions/environment-variables
+          BRANCH_NAME_FROM_ENV_VARS="${GITHUB_REF}"
+      - name: print-github-script-env
+        uses: actions/github-script@v7
+        env:
+          SAY_MY_NAME: "Heisenberg"
+          # GitHub Actions Context 表達式，同上方解釋
+          FROM_REF: "${{ github.ref }}"
+        with:
+          script: |
+            // GitHub Script: (JavaScript (Node.js)):
+
+            // 從 process.env 取 ENV 值
+            console.log(`FROM_REF: ${process.env.FROM_REF}`);
+
+            // github-script 中會自動注入到 context 變數供 javascript 直接引用
+            // https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
+            const branch_name_from_context_vars = context.ref;
+            console.log(`branch_name_from_context_vars: ${branch_name_from_context_vars}`);
+
+            // 同樣也能用 GitHub Actions Context 表達式(只是意義不大):
+            const branch_name_from_context = "${{ github.ref }}";
+            console.log(`branch_name_from_context: ${branch_name_from_context}`);
+            
+            for (const [key, value] of Object.entries(process.env)) {
+              console.log(`${key}=${value}`);
+            }
+
+            // github-script 中的 github 物件是 Octokit REST API 實例
+            // 用來操作 github api 使用
+            // 例如：
+            // await github.rest.pulls.list({
+            //   owner: context.repo.owner,
+            //   repo: context.repo.repo,
+            //   state: "open"
+            //  });
