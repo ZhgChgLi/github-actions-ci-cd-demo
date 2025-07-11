@@ -70,3 +70,37 @@ jobs:
             //   repo: context.repo.repo,
             //   state: "open"
             //  });
+      - name: Check if GITHUB_TOKEN is auto-injected
+        run: |
+          if [ -z "$GITHUB_TOKEN" ]; then
+            echo "❌ GITHUB_TOKEN is NOT set"
+          else
+            echo "✅ GITHUB_TOKEN is set"
+          fi
+      
+      - name: gh CLI without GH_TOKEN (expected to fail)
+        # gh CLI does NOT use GITHUB_TOKEN by default; requires GH_TOKEN
+        continue-on-error: true
+        run: |
+          PR_COUNT=$(gh pr list --json number --jq 'length')
+          echo "Found $PR_COUNT open pull requests"
+      
+      - name: gh CLI with GH_TOKEN (expected to succeed)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # Assign GH_TOKEN so gh CLI can authenticate
+        run: |
+          PR_COUNT=$(gh pr list --json number --jq 'length')
+          echo "Found $PR_COUNT open pull requests"
+      
+      - name: github-script auto-authentication (no GH_TOKEN needed)
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // github = Octokit REST client (auto-authenticated with GITHUB_TOKEN)
+            const pulls = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "open"
+            });
+            console.log(`Found ${pulls.data.length} open pull requests`);
