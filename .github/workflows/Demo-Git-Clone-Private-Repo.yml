@@ -1,4 +1,4 @@
-name: Demo Git Clone Private Repo
+name: Demo-Git-Clone-Private-Repo
 
 on:
   workflow_dispatch:
