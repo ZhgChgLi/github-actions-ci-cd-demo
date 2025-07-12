@@ -1,0 +1,30 @@
+name: Automation-label-pr-base-branch
+
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  call-label-pr-workflow:
+    name: Call Base Branch Label Workflow
+    # ✅ 如果被呼叫的 workflow 在同一個 repo：
+    #    uses: ./.github/workflows/Automation-label-pr-base-branch.yml
+    #    注意：這種寫法無法指定分支（固定使用 caller workflow 的 branch）
+    #    參考範例：
+    #    - CD-Deploy-Form.yml 呼叫本 repo workflow
+    #    - CD-Deploy.yml 呼叫跨 repo workflow
+    #
+    # ✅ 如果被呼叫的 workflow 在其他 repo：
+    #    uses: {owner}/{repo}/.github/workflows/{file}.yml@{branch_or_tag}
+    #    可以指定 branch 或 tag
+    #    ref: https://github.com/ZhgChgLi/github-actions-ci-cd-demo-share-actions/blob/main/.github/workflows/Automation-label-pr-base-branch.yml
+    uses: ZhgChgLi/github-actions-ci-cd-demo-share-actions/.github/workflows/Automation-label-pr-base-branch.yml@main
+    with:
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      
+    # 如果所有 secrets 都要繼承 caller workflow，直接用 `inherit`
+    # secrets: inherit
+    #
+    # 如果只要傳特定 secrets，個別指定
+    secrets:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
