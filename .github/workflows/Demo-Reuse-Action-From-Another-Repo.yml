@@ -20,7 +20,7 @@ jobs:
     #    ref: https://github.com/ZhgChgLi/github-actions-ci-cd-demo-share-actions/blob/main/.github/workflows/Automation-label-pr-base-branch.yml
     uses: ZhgChgLi/github-actions-ci-cd-demo-share-actions/.github/workflows/Automation-label-pr-base-branch.yml@main
     with:
-      PR_NUMBER: ${{ github.event.pull_request.number }}
+      PR_NUMBER: ${{ github.event.number }}
       
     # 如果所有 secrets 都要繼承 caller workflow，直接用 `inherit`
     # secrets: inherit
