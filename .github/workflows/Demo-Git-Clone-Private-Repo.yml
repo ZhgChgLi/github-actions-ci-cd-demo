@@ -5,7 +5,6 @@ on:
 
 jobs:
   clone-private-repo:
-    name: Test: Git Clone Private Repo
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
