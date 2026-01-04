@@ -229,8 +229,8 @@ jobs:
           
           # 所有輸出都寫入檔案
           bundle exec fastlane ${TEST_LANE} device:"${SIMULATOR_NAME} (${SIMULATOR_IOS_VERSION})" | tee "$RUNNER_TEMP/testing_output.txt"
-          # 如果目前 EXIT_CODE 是 0，則將 ${pipestatus[1]} 賦值給 EXIT_CODE
-          [[ $EXIT_CODE -eq 0 ]] && EXIT_CODE=${pipestatus[1]}
+          # 如果目前 EXIT_CODE 是 0，則將 ${PIPESTATUS[0]} = bundle exec fastlane ${TEST_LANE}.. 結果 賦值給 EXIT_CODE
+          [[ $EXIT_CODE -eq 0 ]] && EXIT_CODE=${PIPESTATUS[0]}
 
           # 恢復出錯就退出
           set -e
